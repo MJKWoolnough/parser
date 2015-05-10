@@ -46,7 +46,7 @@ func (p *Parser) Peek() rune {
 // string for the next round of parsing.
 func (p *Parser) Get() string {
 	s := p.Str[:p.pos]
-	p.Clear()
+	p.clear()
 	return s
 }
 
@@ -61,7 +61,7 @@ func (p *Parser) Left() int {
 	return len(p.Str)
 }
 
-func (p *Parser) Clear() {
+func (p *Parser) clear() {
 	p.Str = p.Str[p.pos:]
 	p.pos = 0
 	p.width = 0

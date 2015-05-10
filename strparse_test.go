@@ -95,14 +95,14 @@ func TestExceptRun(t *testing.T) {
 		return
 	}
 	p.Except("")
-	p.Clear()
+	p.Get()
 	p.ExceptRun("\n")
 	if s := p.Get(); s != "67890DEF" {
 		t.Errorf("expecting \"67890DEF\", got %q", s)
 		return
 	}
 	p.Except("")
-	p.Clear()
+	p.Get()
 	p.ExceptRun("")
 	if s := p.Get(); s != "OH MY!" {
 		t.Errorf("expecting \"OH MY!\", got %q", s)

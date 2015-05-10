@@ -20,7 +20,7 @@ func (p *Parser) next() rune {
 		p.width = 0
 		return -1
 	}
-	r, s := utf8.DecodeRuneInString(p.Str)
+	r, s := utf8.DecodeRuneInString(p.Str[p.pos:])
 	p.pos += s
 	p.width = s
 	return r

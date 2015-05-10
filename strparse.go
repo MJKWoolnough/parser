@@ -49,7 +49,7 @@ func (p *Parser) Len() int {
 	return p.pos
 }
 
-func (p *Parser) Cap() int {
+func (p *Parser) Left() int {
 	return len(p.Str)
 }
 

@@ -6,11 +6,13 @@ import (
 	"unicode/utf8"
 )
 
+// Parser is a helper with aids with the parsing of formatted strings.
 type Parser struct {
 	Str        string
 	pos, width int
 }
 
+// New returns a new Parser type containg the given string.
 func New(s string) *Parser {
 	return &Parser{Str: s}
 }
@@ -33,22 +35,28 @@ func (p *Parser) backup() {
 	}
 }
 
+// Peek returns the next rune without advancing the read position.
 func (p *Parser) Peek() rune {
 	r := p.next()
 	p.backup()
 	return r
 }
 
+// Get returns a string of everything that has been read so far and resets the
+// string for the next round of parsing.
 func (p *Parser) Get() string {
 	s := p.Str[:p.pos]
 	p.Clear()
 	return s
 }
 
+// Len returns the current length of the read string.
 func (p *Parser) Len() int {
 	return p.pos
 }
 
+// Left returns how much of the string is left in the Parser. This includes
+// everything read since the last Get.
 func (p *Parser) Left() int {
 	return len(p.Str)
 }
@@ -59,6 +67,10 @@ func (p *Parser) Clear() {
 	p.width = 0
 }
 
+// Accept returns true if the next character to be read is contained within the
+// given string.
+// Upon true, it advances the read position, otherwise the position remains the
+// same.
 func (p *Parser) Accept(chars string) bool {
 	if strings.IndexRune(chars, p.next()) < 0 {
 		p.backup()
@@ -67,6 +79,8 @@ func (p *Parser) Accept(chars string) bool {
 	return true
 }
 
+// AcceptRun reads from the string as long as the read character is in the
+// given string.
 func (p *Parser) AcceptRun(chars string) {
 	for {
 		if strings.IndexRune(chars, p.next()) < 0 {
@@ -76,6 +90,10 @@ func (p *Parser) AcceptRun(chars string) {
 	}
 }
 
+// Except returns true if the next character to be read is not contained within
+// the given string.
+// Upon true, it advances the read position, otherwise the position remains the
+// same.
 func (p *Parser) Except(chars string) bool {
 	if r := p.next(); r == -1 || strings.IndexRune(chars, r) >= 0 {
 		p.backup()
@@ -84,6 +102,8 @@ func (p *Parser) Except(chars string) bool {
 	return true
 }
 
+// ExceptRun reads from the string as long as the read character is not in the
+// given string.
 func (p *Parser) ExceptRun(chars string) {
 	for {
 		if r := p.next(); r == -1 || strings.IndexRune(chars, r) >= 0 {

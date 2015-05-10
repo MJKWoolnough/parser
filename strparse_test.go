@@ -1,6 +1,7 @@
 package strparse_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/MJKWoolnough/strparse"
@@ -108,4 +109,22 @@ func TestExceptRun(t *testing.T) {
 		t.Errorf("expecting \"OH MY!\", got %q", s)
 		return
 	}
+}
+
+func Example() {
+	p := strparse.New("Hello, World!")
+	alphaNum := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	p.AcceptRun(alphaNum)
+	word := p.Get()
+	fmt.Println("got word:", word)
+
+	p.ExceptRun(alphaNum)
+	p.Get()
+
+	p.AcceptRun(alphaNum)
+	word = p.Get()
+	fmt.Println("got word:", word)
+	// Output:
+	// got word: Hello
+	// got word: World
 }

@@ -11,6 +11,10 @@ type Parser struct {
 	pos, width int
 }
 
+func New(s string) *Parser {
+	return &Parser{Str: s}
+}
+
 func (p *Parser) next() rune {
 	if p.pos == len(p.Str) {
 		p.width = 0

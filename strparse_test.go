@@ -1,14 +1,14 @@
-package strparse_test
+package parser_test
 
 import (
 	"fmt"
 	"testing"
 
-	"github.com/MJKWoolnough/strparse"
+	"github.com/MJKWoolnough/parser"
 )
 
 func TestAccept(t *testing.T) {
-	p := strparse.Parser{Str: "ABC£"}
+	p := parser.NewStringParser("ABC£")
 	p.Accept("ABCD")
 	if s := p.Get(); s != "A" {
 		t.Errorf("expecting \"A\", got %q", s)
@@ -37,7 +37,7 @@ func TestAccept(t *testing.T) {
 }
 
 func TestAcceptRun(t *testing.T) {
-	p := strparse.Parser{Str: "123ABC££$$%%^^\n"}
+	p := parser.NewStringParser("123ABC££$$%%^^\n")
 	p.AcceptRun("0123456789")
 	if s := p.Get(); s != "123" {
 		t.Errorf("expecting \"123\", got %q", s)
@@ -61,7 +61,7 @@ func TestAcceptRun(t *testing.T) {
 }
 
 func TestExcept(t *testing.T) {
-	p := strparse.Parser{Str: "123"}
+	p := parser.NewStringParser("123")
 	p.Except("1")
 	if s := p.Get(); s != "" {
 		t.Errorf("expecting \"\", got %q", s)
@@ -89,7 +89,7 @@ func TestExcept(t *testing.T) {
 }
 
 func TestExceptRun(t *testing.T) {
-	p := strparse.Parser{Str: "12345ABC\n67890DEF\nOH MY!"}
+	p := parser.NewStringParser("12345ABC\n67890DEF\nOH MY!")
 	p.ExceptRun("\n")
 	if s := p.Get(); s != "12345ABC" {
 		t.Errorf("expecting \"12345ABC\", got %q", s)
@@ -112,7 +112,7 @@ func TestExceptRun(t *testing.T) {
 }
 
 func Example() {
-	p := strparse.New("Hello, World!")
+	p := parser.NewStringParser("Hello, World!")
 	alphaNum := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	p.AcceptRun(alphaNum)
 	word := p.Get()

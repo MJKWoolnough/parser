@@ -1,8 +1,10 @@
-# strparse
+# parser
 --
-    import "github.com/MJKWoolnough/strparse"
+    import "github.com/MJKWoolnough/parser"
 
-Package strparse is a simple helper package for parsing strings
+Package parser is a simple helper package for parsing strings, byte slices and Readers
+
+Package parser is a simple helper package for parsing strings, byte slices and Readers
 
 ## Usage
 
@@ -10,80 +12,85 @@ Package strparse is a simple helper package for parsing strings
 
 ```go
 type Parser struct {
-	Str string
 	// contains filtered or unexported fields
 }
 ```
 
-Parser is a helper with aids with the parsing of formatted strings.
+Parser is the wrapper type for the various different parsers.
 
-#### func  New
+#### func  NewByteParser
 
 ```go
-func New(s string) *Parser
+func NewByteParser(data []byte) Parser
 ```
-New returns a new Parser type containg the given string.
+NewByteParser returns a Parser which parses a byte slice.
 
-#### func (*Parser) Accept
+#### func  NewReaderParser
 
 ```go
-func (p *Parser) Accept(chars string) bool
+func NewReaderParser(reader io.Reader) Parser
+```
+NewReaderParser returns a Parser which parses a Reader.
+
+#### func  NewStringParser
+
+```go
+func NewStringParser(str string) Parser
+```
+NewStringParser returns a Parser which parses a string.
+
+#### func (Parser) Accept
+
+```go
+func (p Parser) Accept(chars string) bool
 ```
 Accept returns true if the next character to be read is contained within the
 given string. Upon true, it advances the read position, otherwise the position
 remains the same.
 
-#### func (*Parser) AcceptRun
+#### func (Parser) AcceptRun
 
 ```go
-func (p *Parser) AcceptRun(chars string)
+func (p Parser) AcceptRun(chars string)
 ```
 AcceptRun reads from the string as long as the read character is in the given
 string.
 
-#### func (*Parser) Except
+#### func (Parser) Except
 
 ```go
-func (p *Parser) Except(chars string) bool
+func (p Parser) Except(chars string) bool
 ```
 Except returns true if the next character to be read is not contained within the
 given string. Upon true, it advances the read position, otherwise the position
 remains the same.
 
-#### func (*Parser) ExceptRun
+#### func (Parser) ExceptRun
 
 ```go
-func (p *Parser) ExceptRun(chars string)
+func (p Parser) ExceptRun(chars string)
 ```
 ExceptRun reads from the string as long as the read character is not in the
 given string.
 
-#### func (*Parser) Get
+#### func (Parser) Get
 
 ```go
-func (p *Parser) Get() string
+func (p Parser) Get() string
 ```
 Get returns a string of everything that has been read so far and resets the
 string for the next round of parsing.
 
-#### func (*Parser) Left
+#### func (Parser) Len
 
 ```go
-func (p *Parser) Left() int
+func (p Parser) Len() int
 ```
-Left returns how much of the string is left in the Parser. This includes
-everything read since the last Get.
+Len returns the number of bytes that has been read since the last Get.
 
-#### func (*Parser) Len
-
-```go
-func (p *Parser) Len() int
-```
-Len returns the current length of the read string.
-
-#### func (*Parser) Peek
+#### func (Parser) Peek
 
 ```go
-func (p *Parser) Peek() rune
+func (p Parser) Peek() rune
 ```
 Peek returns the next rune without advancing the read position.

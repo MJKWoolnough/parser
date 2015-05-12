@@ -14,6 +14,9 @@ func (p *byteParser) next() rune {
 		return -1
 	}
 	r, s := utf8.DecodeRune(p.data[p.pos:])
+	if r == utf8.RuneError && s == 1 {
+		r = rune(p.data[p.pos])
+	}
 	p.pos += s
 	p.width = s
 	return r

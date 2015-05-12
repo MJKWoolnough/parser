@@ -3,6 +3,7 @@ package parser
 import (
 	"bufio"
 	"bytes"
+	"unicode/utf8"
 )
 
 type readerParser struct {
@@ -16,6 +17,12 @@ func (r *readerParser) next() rune {
 	if err != nil {
 		r.width = 0
 		return -1
+	}
+	if ru == utf8.RuneError && s == 1 {
+		r.reader.UnreadRune()
+		b, _ := r.reader.ReadByte()
+		r.reader.ReadRune()
+		ru = rune(b)
 	}
 	r.width = s
 	r.buf.WriteRune(ru)

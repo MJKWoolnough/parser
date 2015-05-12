@@ -17,6 +17,10 @@ func NewStringParser(str string) Parser {
 	return Parser{&strParser{str: str}}
 }
 
+func NewByteParser(data []byte) Parser {
+	return Parser{&byteParser{data: data}}
+}
+
 // Peek returns the next rune without advancing the read position.
 func (p Parser) Peek() rune {
 	r := p.next()

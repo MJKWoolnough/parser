@@ -7,8 +7,8 @@ import (
 	"github.com/MJKWoolnough/parser"
 )
 
-func TestStrAccept(t *testing.T) {
-	p := parser.NewStringParser("ABC£")
+func TestByteAccept(t *testing.T) {
+	p := parser.NewByteParser([]byte("ABC£"))
 	p.Accept("ABCD")
 	if s := p.Get(); s != "A" {
 		t.Errorf("expecting \"A\", got %q", s)
@@ -36,8 +36,8 @@ func TestStrAccept(t *testing.T) {
 	}
 }
 
-func TestStrAcceptRun(t *testing.T) {
-	p := parser.NewStringParser("123ABC££$$%%^^\n")
+func TestByteAcceptRun(t *testing.T) {
+	p := parser.NewByteParser([]byte("123ABC££$$%%^^\n"))
 	p.AcceptRun("0123456789")
 	if s := p.Get(); s != "123" {
 		t.Errorf("expecting \"123\", got %q", s)
@@ -60,8 +60,8 @@ func TestStrAcceptRun(t *testing.T) {
 	}
 }
 
-func TestStrExcept(t *testing.T) {
-	p := parser.NewStringParser("123")
+func TestByteExcept(t *testing.T) {
+	p := parser.NewByteParser([]byte("123"))
 	p.Except("1")
 	if s := p.Get(); s != "" {
 		t.Errorf("expecting \"\", got %q", s)
@@ -88,8 +88,8 @@ func TestStrExcept(t *testing.T) {
 	}
 }
 
-func TestStrExceptRun(t *testing.T) {
-	p := parser.NewStringParser("12345ABC\n67890DEF\nOH MY!")
+func TestByteExceptRun(t *testing.T) {
+	p := parser.NewByteParser([]byte("12345ABC\n67890DEF\nOH MY!"))
 	p.ExceptRun("\n")
 	if s := p.Get(); s != "12345ABC" {
 		t.Errorf("expecting \"12345ABC\", got %q", s)
@@ -111,8 +111,8 @@ func TestStrExceptRun(t *testing.T) {
 	}
 }
 
-func ExampleNewStringParser() {
-	p := parser.NewStringParser("Hello, World!")
+func ExampleNewByteParser() {
+	p := parser.NewByteParser([]byte("Hello, World!"))
 	alphaNum := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	p.AcceptRun(alphaNum)
 	word := p.Get()

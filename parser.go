@@ -1,6 +1,10 @@
 package parser
 
-import "strings"
+import (
+	"bufio"
+	"io"
+	"strings"
+)
 
 type parser interface {
 	backup()
@@ -19,6 +23,10 @@ func NewStringParser(str string) Parser {
 
 func NewByteParser(data []byte) Parser {
 	return Parser{&byteParser{data: data}}
+}
+
+func NewReaderParser(reader io.Reader) Parser {
+	return Parser{&readerParser{reader: bufio.NewReader(reader)}}
 }
 
 // Peek returns the next rune without advancing the read position.

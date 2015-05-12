@@ -13,18 +13,22 @@ type parser interface {
 	next() rune
 }
 
+// Parser is the wrapper type for the various different parsers.
 type Parser struct {
 	parser
 }
 
+// NewStringParser returns a Parser which parses a string.
 func NewStringParser(str string) Parser {
 	return Parser{&strParser{str: str}}
 }
 
+// NewByteParser returns a Parser which parses a byte slice.
 func NewByteParser(data []byte) Parser {
 	return Parser{&byteParser{data: data}}
 }
 
+// NewReaderParser returns a Parser which parses a Reader.
 func NewReaderParser(reader io.Reader) Parser {
 	return Parser{&readerParser{reader: bufio.NewReader(reader)}}
 }

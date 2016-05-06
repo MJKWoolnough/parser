@@ -17,25 +17,27 @@ type parser interface {
 // Parser is the wrapper type for the various different parsers.
 type Parser struct {
 	parser
+	State StateFn
+	Err   error
 }
 
 // NewStringParser returns a Parser which parses a string.
 func NewStringParser(str string) Parser {
-	return Parser{&strParser{str: str}}
+	return Parser{parser: &strParser{str: str}}
 }
 
 // NewByteParser returns a Parser which parses a byte slice.
 func NewByteParser(data []byte) Parser {
-	return Parser{&byteParser{data: data}}
+	return Parser{parser: &byteParser{data: data}}
 }
 
 // NewReaderParser returns a Parser which parses a Reader.
 func NewReaderParser(reader io.Reader) Parser {
-	return Parser{&readerParser{reader: bufio.NewReader(reader)}}
+	return Parser{parser: &readerParser{reader: bufio.NewReader(reader)}}
 }
 
 // Peek returns the next rune without advancing the read position.
-func (p Parser) Peek() rune {
+func (p *Parser) Peek() rune {
 	r := p.next()
 	p.backup()
 	return r
@@ -43,12 +45,12 @@ func (p Parser) Peek() rune {
 
 // Get returns a string of everything that has been read so far and resets the
 // string for the next round of parsing.
-func (p Parser) Get() string {
+func (p *Parser) Get() string {
 	return p.get()
 }
 
 // Len returns the number of bytes that has been read since the last Get.
-func (p Parser) Len() int {
+func (p *Parser) Len() int {
 	return p.length()
 }
 
@@ -56,7 +58,7 @@ func (p Parser) Len() int {
 // given string.
 // Upon true, it advances the read position, otherwise the position remains the
 // same.
-func (p Parser) Accept(chars string) bool {
+func (p *Parser) Accept(chars string) bool {
 	if strings.IndexRune(chars, p.next()) < 0 {
 		p.backup()
 		return false

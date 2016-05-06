@@ -1,3 +1,4 @@
+// Package parser is a simple helper package for parsing strings, byte slices and io.Readers
 package parser
 
 import (

@@ -1,4 +1,3 @@
-// Package parser is a simple helper package for parsing strings, byte slices and Readers
 package parser
 
 import "unicode/utf8"

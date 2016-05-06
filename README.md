@@ -2,9 +2,8 @@
 --
     import "github.com/MJKWoolnough/parser"
 
-Package parser is a simple helper package for parsing strings, byte slices and Readers
-
-Package parser is a simple helper package for parsing strings, byte slices and Readers
+Package parser is a simple helper package for parsing strings, byte slices and
+io.Readers
 
 ## Usage
 
@@ -12,7 +11,6 @@ Package parser is a simple helper package for parsing strings, byte slices and R
 
 ```go
 type Parser struct {
-	// contains filtered or unexported fields
 }
 ```
 

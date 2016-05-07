@@ -37,7 +37,7 @@ func (p *Parser) GetToken() (Token, error) {
 	}
 	if p.State == nil {
 		p.Err = ErrNoState
-		p.State = p.Error()
+		p.State = p.Error
 	}
 	var tk Token
 	tk, p.State = p.State()

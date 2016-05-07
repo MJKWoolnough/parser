@@ -1,6 +1,9 @@
 package parser
 
-import "io"
+import (
+	"errors"
+	"io"
+)
 
 // TokenType represents the type of token being read.
 //
@@ -31,6 +34,10 @@ func (p *Parser) GetToken() (Token, error) {
 			Type: TokenDone,
 			Data: "",
 		}, io.EOF
+	}
+	if p.State == nil {
+		p.Err = ErrNoState
+		p.State = p.Error()
 	}
 	var tk Token
 	tk, p.State = p.State()
@@ -64,3 +71,8 @@ func (p *Parser) Error() (Token, StateFn) {
 		Data: p.Err.Error(),
 	}, p.Error
 }
+
+// Errors
+var (
+	ErrNoState = errors.New("no state")
+)

@@ -17,23 +17,24 @@ type parser interface {
 // Parser is the wrapper type for the various different parsers.
 type Parser struct {
 	parser
-	State StateFn
-	Err   error
+	State       StateFn
+	Err         error
+	peekedToken Token
 }
 
 // NewStringParser returns a Parser which parses a string.
 func NewStringParser(str string) Parser {
-	return Parser{parser: &strParser{str: str}}
+	return Parser{parser: &strParser{str: str}, peekedToken: Token{Type: TokenEmpty}}
 }
 
 // NewByteParser returns a Parser which parses a byte slice.
 func NewByteParser(data []byte) Parser {
-	return Parser{parser: &byteParser{data: data}}
+	return Parser{parser: &byteParser{data: data}, peekedToken: Token{Type: TokenEmpty}}
 }
 
 // NewReaderParser returns a Parser which parses a Reader.
 func NewReaderParser(reader io.Reader) Parser {
-	return Parser{parser: &readerParser{reader: bufio.NewReader(reader)}}
+	return Parser{parser: &readerParser{reader: bufio.NewReader(reader)}, peekedToken: Token{Type: TokenEmpty}}
 }
 
 // Peek returns the next rune without advancing the read position.

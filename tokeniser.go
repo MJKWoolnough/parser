@@ -12,8 +12,9 @@ type TokenType int
 
 // Constants TokenError (-2) and TokenDone (-1)
 const (
-	TokenError TokenType = iota - 2
-	TokenDone
+	TokenDone TokenType = -1 - iota
+	TokenError
+	TokenEmpty
 )
 
 // Token represents data parsed from the stream.
@@ -29,6 +30,11 @@ type StateFn func() (Token, StateFn)
 // GetToken reads the next token in the stream, and returns the token and any
 // error that occurred.
 func (p *Parser) GetToken() (Token, error) {
+	if p.peekedToken.Type != TokenEmpty {
+		tk := p.peekedToken
+		p.peekedToken.Type = TokenEmpty
+		return tk, p.Err
+	}
 	if p.Err == io.EOF {
 		return Token{
 			Type: TokenDone,
@@ -49,6 +55,11 @@ func (p *Parser) GetToken() (Token, error) {
 		}
 	}
 	return tk, p.Err
+}
+
+// BufferToken puts the given token in the Peek buffer.
+func (p *Parser) BufferToken(t Token) {
+	p.peekedToken = t
 }
 
 // Done is a StateFn that is used to indicate that there are no more tokens to

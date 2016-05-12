@@ -37,25 +37,25 @@ type tokeniser interface {
 // Tokeniser is
 type Tokeniser struct {
 	tokeniser
-	err   error
+	Err   error
 	state TokenFunc
 }
 
 func (t *Tokeniser) get() Token {
-	if t.err == io.EOF {
+	if t.Err == io.EOF {
 		return Token{
 			Type: TokenDone,
 			Data: "",
 		}
 	}
 	if t.state == nil {
-		t.err = ErrNoState
+		t.Err = ErrNoState
 		t.state = (*Tokeniser).Error
 	}
 	var tk Token
 	tk, t.state = t.state(t)
-	if tk.Type == TokenError && t.err == io.EOF {
-		t.err = io.ErrUnexpectedEOF
+	if tk.Type == TokenError && t.Err == io.EOF {
+		t.Err = io.ErrUnexpectedEOF
 	}
 	return tk
 }
@@ -132,15 +132,11 @@ func (t *Tokeniser) ExceptRun(chars string) rune {
 // Done is a TokenFunc that is used to indicate that there are no more tokens to
 // parse.
 func (t *Tokeniser) Done() (Token, TokenFunc) {
-	t.err = io.EOF
+	t.Err = io.EOF
 	return Token{
 		Type: TokenDone,
 		Data: "",
 	}, (*Tokeniser).Done
-}
-
-func (t *Tokeniser) SetError(err error) {
-	t.err = err
 }
 
 // Error represents an error state for the parser.
@@ -150,7 +146,7 @@ func (t *Tokeniser) SetError(err error) {
 func (t *Tokeniser) Error() (Token, TokenFunc) {
 	return Token{
 		Type: TokenError,
-		Data: t.err.Error(),
+		Data: t.Err.Error(),
 	}, (*Tokeniser).Error
 }
 

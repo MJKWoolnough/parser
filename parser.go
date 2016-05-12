@@ -50,29 +50,29 @@ func NewReaderTokeniser(reader io.Reader) Tokeniser {
 func (p *Parser) GetToken() (Token, error) {
 	tk := p.phraser.tokeniser.get()
 	if tk.Type == TokenError {
-		return tk, p.phraser.tokeniser.err
+		return tk, p.phraser.tokeniser.Err
 	}
 	return tk, nil
 }
 
 func (p *Parser) GetPhrase() (Phrase, error) {
-	if p.phraser.tokeniser.err == io.EOF {
+	if p.phraser.tokeniser.Err == io.EOF {
 		return Phrase{
 			Type: PhraseDone,
 			Data: make([]Token, 0),
 		}, io.EOF
 	}
 	if p.phraser.state == nil {
-		p.phraser.tokeniser.err = ErrNoState
+		p.phraser.tokeniser.Err = ErrNoState
 		p.phraser.state = (*Phraser).Error
 	}
 	var ph Phrase
 	ph, p.phraser.state = p.phraser.state(&p.phraser)
 	if ph.Type == PhraseError {
-		if p.phraser.tokeniser.err == io.EOF {
-			p.phraser.tokeniser.err = io.ErrUnexpectedEOF
+		if p.phraser.tokeniser.Err == io.EOF {
+			p.phraser.tokeniser.Err = io.ErrUnexpectedEOF
 		}
-		return ph, p.phraser.tokeniser.err
+		return ph, p.phraser.tokeniser.Err
 	}
 	return ph, nil
 }

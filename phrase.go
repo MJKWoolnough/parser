@@ -118,7 +118,7 @@ func (p *Phraser) ExceptRun(types ...TokenType) TokenType {
 }
 
 func (p *Phraser) Done() (Phrase, PhraseFunc) {
-	p.tokeniser.err = io.EOF
+	p.tokeniser.Err = io.EOF
 	return Phrase{
 		Type: PhraseDone,
 		Data: make([]Token, 0),
@@ -129,7 +129,7 @@ func (p *Phraser) Error() (Phrase, PhraseFunc) {
 	return Phrase{
 		Type: PhraseError,
 		Data: []Token{
-			{Type: TokenError, Data: p.tokeniser.err.Error()},
+			{Type: TokenError, Data: p.tokeniser.Err.Error()},
 		},
 	}, (*Phraser).Error
 }

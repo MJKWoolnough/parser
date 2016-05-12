@@ -7,18 +7,7 @@ import (
 	"github.com/MJKWoolnough/parser"
 )
 
-func getTokeniser(p parser.Parser) *parser.Tokeniser {
-	var tk *parser.Tokeniser
-	p.TokeniserState(func(t *parser.Tokeniser) (parser.Token, parser.TokenFunc) {
-		tk = t
-		return parser.Token{}, nil
-	})
-	p.GetToken()
-	return tk
-}
-
-func TestByteAccept(t *testing.T) {
-	p := getTokeniser(parser.NewByteParser([]byte("ABC£")))
+func testTokeniserAccept(t *testing.T, p parser.Tokeniser) {
 	p.Accept("ABCD")
 	if s := p.Lexeme(); s != "A" {
 		t.Errorf("expecting \"A\", got %q", s)
@@ -46,8 +35,11 @@ func TestByteAccept(t *testing.T) {
 	}
 }
 
-func TestByteAcceptRun(t *testing.T) {
-	p := getTokeniser(parser.NewByteParser([]byte("123ABC££$$%%^^\n")))
+func TestByteAccept(t *testing.T) {
+	testTokeniserAccept(t, parser.NewByteTokeniser([]byte("ABC£")))
+}
+
+func testTokeniserAcceptRun(t *testing.T, p parser.Tokeniser) {
 	p.AcceptRun("0123456789")
 	if s := p.Lexeme(); s != "123" {
 		t.Errorf("expecting \"123\", got %q", s)
@@ -70,8 +62,11 @@ func TestByteAcceptRun(t *testing.T) {
 	}
 }
 
-func TestByteExcept(t *testing.T) {
-	p := getTokeniser(parser.NewByteParser([]byte("123")))
+func TestByteAcceptRun(t *testing.T) {
+	testTokeniserAcceptRun(t, parser.NewByteTokeniser([]byte("123ABC££$$%%^^\n")))
+}
+
+func testTokeniserExcept(t *testing.T, p parser.Tokeniser) {
 	p.Except("1")
 	if s := p.Lexeme(); s != "" {
 		t.Errorf("expecting \"\", got %q", s)
@@ -98,8 +93,11 @@ func TestByteExcept(t *testing.T) {
 	}
 }
 
-func TestByteExceptRun(t *testing.T) {
-	p := getTokeniser(parser.NewByteParser([]byte("12345ABC\n67890DEF\nOH MY!")))
+func TestByteExcept(t *testing.T) {
+	testTokeniserExcept(t, parser.NewByteTokeniser([]byte("123")))
+}
+
+func testTokeniserExceptRun(t *testing.T, p parser.Tokeniser) {
 	p.ExceptRun("\n")
 	if s := p.Lexeme(); s != "12345ABC" {
 		t.Errorf("expecting \"12345ABC\", got %q", s)
@@ -121,8 +119,12 @@ func TestByteExceptRun(t *testing.T) {
 	}
 }
 
+func TestByteExceptRun(t *testing.T) {
+	testTokeniserExceptRun(t, parser.NewByteTokeniser([]byte("12345ABC\n67890DEF\nOH MY!")))
+}
+
 func ExampleNewByteParser() {
-	p := getTokeniser(parser.NewByteParser([]byte("Hello, World!"))) // needs fixing
+	p := parser.NewByteTokeniser([]byte("Hello, World!"))
 	alphaNum := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	p.AcceptRun(alphaNum)
 	word := p.Lexeme()

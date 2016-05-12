@@ -8,111 +8,23 @@ import (
 )
 
 func TestStrAccept(t *testing.T) {
-	p := getTokeniser(parser.NewStringParser("ABC£"))
-	p.Accept("ABCD")
-	if s := p.Lexeme(); s != "A" {
-		t.Errorf("expecting \"A\", got %q", s)
-		return
-	}
-	p.Accept("ABCD")
-	if s := p.Lexeme(); s != "B" {
-		t.Errorf("expecting \"B\", got %q", s)
-		return
-	}
-	p.Accept("ABCD")
-	if s := p.Lexeme(); s != "C" {
-		t.Errorf("expecting \"C\", got %q", s)
-		return
-	}
-	p.Accept("ABCD")
-	if s := p.Lexeme(); s != "" {
-		t.Errorf("expecting \"\", got %q", s)
-		return
-	}
-	p.Accept("£")
-	if s := p.Lexeme(); s != "£" {
-		t.Errorf("expecting \"£\", got %q", s)
-		return
-	}
+	testTokeniserAccept(t, parser.NewStringTokeniser("ABC£"))
 }
 
 func TestStrAcceptRun(t *testing.T) {
-	p := getTokeniser(parser.NewStringParser("123ABC££$$%%^^\n"))
-	p.AcceptRun("0123456789")
-	if s := p.Lexeme(); s != "123" {
-		t.Errorf("expecting \"123\", got %q", s)
-		return
-	}
-	p.AcceptRun("ABC")
-	if s := p.Lexeme(); s != "ABC" {
-		t.Errorf("expecting \"ABC\", got %q", s)
-		return
-	}
-	p.AcceptRun("£$%^")
-	if s := p.Lexeme(); s != "££$$%%^^" {
-		t.Errorf("expecting \"££$$%%^^\", got %q", s)
-		return
-	}
-	p.AcceptRun("\n")
-	if s := p.Lexeme(); s != "\n" {
-		t.Errorf("expecting \"\\n\", got %q", s)
-		return
-	}
+	testTokeniserAcceptRun(t, parser.NewStringTokeniser("123ABC££$$%%^^\n"))
 }
 
 func TestStrExcept(t *testing.T) {
-	p := getTokeniser(parser.NewStringParser("123"))
-	p.Except("1")
-	if s := p.Lexeme(); s != "" {
-		t.Errorf("expecting \"\", got %q", s)
-	}
-	p.Except("2")
-	if s := p.Lexeme(); s != "1" {
-		t.Errorf("expecting \"1\", got %q", s)
-	}
-	p.Except("2")
-	if s := p.Lexeme(); s != "" {
-		t.Errorf("expecting \"\", got %q", s)
-	}
-	p.Except("!")
-	if s := p.Lexeme(); s != "2" {
-		t.Errorf("expecting \"2\", got %q", s)
-	}
-	p.Except("!")
-	if s := p.Lexeme(); s != "3" {
-		t.Errorf("expecting \"3\", got %q", s)
-	}
-	p.Except("!")
-	if s := p.Lexeme(); s != "" {
-		t.Errorf("expecting \"\", got %q", s)
-	}
+	testTokeniserExcept(t, parser.NewStringTokeniser("123"))
 }
 
 func TestStrExceptRun(t *testing.T) {
-	p := getTokeniser(parser.NewStringParser("12345ABC\n67890DEF\nOH MY!"))
-	p.ExceptRun("\n")
-	if s := p.Lexeme(); s != "12345ABC" {
-		t.Errorf("expecting \"12345ABC\", got %q", s)
-		return
-	}
-	p.Except("")
-	p.Lexeme()
-	p.ExceptRun("\n")
-	if s := p.Lexeme(); s != "67890DEF" {
-		t.Errorf("expecting \"67890DEF\", got %q", s)
-		return
-	}
-	p.Except("")
-	p.Lexeme()
-	p.ExceptRun("")
-	if s := p.Lexeme(); s != "OH MY!" {
-		t.Errorf("expecting \"OH MY!\", got %q", s)
-		return
-	}
+	testTokeniserExceptRun(t, parser.NewStringTokeniser("12345ABC\n67890DEF\nOH MY!"))
 }
 
 func ExampleNewStringParser() {
-	p := getTokeniser(parser.NewStringParser("Hello, World!"))
+	p := parser.NewStringTokeniser("Hello, World!")
 	alphaNum := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	p.AcceptRun(alphaNum)
 	word := p.Lexeme()

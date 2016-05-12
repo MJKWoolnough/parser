@@ -11,41 +11,38 @@ type Parser struct {
 	phraser Phraser
 }
 
-// NewStringParser returns a Parser which parses a string.
-func NewStringParser(str string) Parser {
+// New wraps a Tokeniser to provide additional functions useful to parsing
+func New(t Tokeniser) Parser {
 	return Parser{
 		phraser: Phraser{
-			tokeniser: Tokeniser{
-				tokeniser: &strParser{
-					str: str,
-				},
-			},
+			tokeniser: t,
 		},
 	}
 }
 
-// NewByteParser returns a Parser which parses a byte slice.
-func NewByteParser(data []byte) Parser {
-	return Parser{
-		phraser: Phraser{
-			tokeniser: Tokeniser{
-				tokeniser: &byteParser{
-					data: data,
-				},
-			},
+// NewStringTokeniser returns a Tokeniser which uses a string.
+func NewStringTokeniser(str string) Tokeniser {
+	return Tokeniser{
+		tokeniser: &strParser{
+			str: str,
 		},
 	}
 }
 
-// NewReaderParser returns a Parser which parses a Reader.
-func NewReaderParser(reader io.Reader) Parser {
-	return Parser{
-		phraser: Phraser{
-			tokeniser: Tokeniser{
-				tokeniser: &readerParser{
-					reader: bufio.NewReader(reader),
-				},
-			},
+// NewByteTokeniser returns a Tokeniser which uses a byte slice.
+func NewByteTokeniser(data []byte) Tokeniser {
+	return Tokeniser{
+		tokeniser: &byteParser{
+			data: data,
+		},
+	}
+}
+
+// NewReaderTokeniser returns a Tokeniser which uses an io.Reader
+func NewReaderTokeniser(reader io.Reader) Tokeniser {
+	return Tokeniser{
+		tokeniser: &readerParser{
+			reader: bufio.NewReader(reader),
 		},
 	}
 }

@@ -7,128 +7,124 @@ io.Readers
 
 ## Usage
 
+```go
+var (
+	ErrNoState = errors.New("no state")
+)
+```
+Errors
+
 #### type Parser
 
 ```go
 type Parser struct {
-	State StateFn
-	Err   error
+	Tokeniser
 }
 ```
 
-Parser is the wrapper type for the various different parsers.
 
-#### func  NewByteParser
-
-```go
-func NewByteParser(data []byte) Parser
-```
-NewByteParser returns a Parser which parses a byte slice.
-
-#### func  NewReaderParser
+#### func  New
 
 ```go
-func NewReaderParser(reader io.Reader) Parser
+func New(t Tokeniser) Parser
 ```
-NewReaderParser returns a Parser which parses a Reader.
-
-#### func  NewStringParser
-
-```go
-func NewStringParser(str string) Parser
-```
-NewStringParser returns a Parser which parses a string.
 
 #### func (*Parser) Accept
 
 ```go
-func (p *Parser) Accept(chars string) bool
+func (p *Parser) Accept(types ...TokenType) bool
 ```
-Accept returns true if the next character to be read is contained within the
-given string. Upon true, it advances the read position, otherwise the position
-remains the same.
 
-#### func (Parser) AcceptRun
+#### func (*Parser) AcceptRun
 
 ```go
-func (p Parser) AcceptRun(chars string)
+func (p *Parser) AcceptRun(types ...TokenType) TokenType
 ```
-AcceptRun reads from the string as long as the read character is in the given
-string.
 
 #### func (*Parser) Done
 
 ```go
-func (p *Parser) Done() (Token, StateFn)
+func (p *Parser) Done() (Phrase, PhraseFunc)
 ```
-Done is a StateFn that is used to indicate that there are no more tokens to
-parse.
 
 #### func (*Parser) Error
 
 ```go
-func (p *Parser) Error() (Token, StateFn)
+func (p *Parser) Error() (Phrase, PhraseFunc)
 ```
-Error represents an error state for the parser.
 
-Should be called from other StateFn's that detect an error. The error value
-should be set to Parser.Err and then this func should be called.
-
-#### func (Parser) Except
+#### func (*Parser) Except
 
 ```go
-func (p Parser) Except(chars string) bool
+func (p *Parser) Except(types ...TokenType) bool
 ```
-Except returns true if the next character to be read is not contained within the
-given string. Upon true, it advances the read position, otherwise the position
-remains the same.
 
-#### func (Parser) ExceptRun
+#### func (*Parser) ExceptRun
 
 ```go
-func (p Parser) ExceptRun(chars string)
+func (p *Parser) ExceptRun(types ...TokenType) TokenType
 ```
-ExceptRun reads from the string as long as the read character is not in the
-given string.
 
 #### func (*Parser) Get
 
 ```go
-func (p *Parser) Get() string
+func (p *Parser) Get() []Token
 ```
-Get returns a string of everything that has been read so far and resets the
-string for the next round of parsing.
 
-#### func (*Parser) GetToken
+#### func (*Parser) GetPhrase
 
 ```go
-func (p *Parser) GetToken() (Token, error)
+func (p *Parser) GetPhrase() (Phrase, error)
 ```
-GetToken reads the next token in the stream, and returns the token and any error
-that occurred.
 
 #### func (*Parser) Len
 
 ```go
 func (p *Parser) Len() int
 ```
-Len returns the number of bytes that has been read since the last Get.
 
 #### func (*Parser) Peek
 
 ```go
-func (p *Parser) Peek() rune
+func (p *Parser) Peek() Token
 ```
-Peek returns the next rune without advancing the read position.
 
-#### type StateFn
+#### func (*Parser) PhraserState
 
 ```go
-type StateFn func() (Token, StateFn)
+func (p *Parser) PhraserState(pf PhraseFunc)
 ```
 
-StateFn is the type that the worker funcs implement in order to be used by the
-parser.
+#### type Phrase
+
+```go
+type Phrase struct {
+	Type PhraseType
+	Data []Token
+}
+```
+
+
+#### type PhraseFunc
+
+```go
+type PhraseFunc func(*Parser) (Phrase, PhraseFunc)
+```
+
+
+#### type PhraseType
+
+```go
+type PhraseType int
+```
+
+
+```go
+const (
+	PhraseDone PhraseType = -1 - iota
+	PhraseError
+)
+```
 
 #### type Token
 
@@ -140,6 +136,15 @@ type Token struct {
 ```
 
 Token represents data parsed from the stream.
+
+#### type TokenFunc
+
+```go
+type TokenFunc func(*Tokeniser) (Token, TokenFunc)
+```
+
+TokenFunc is the type that the worker funcs implement in order to be used by the
+tokeniser.
 
 #### type TokenType
 
@@ -153,8 +158,131 @@ Negative values are reserved for this package.
 
 ```go
 const (
-	TokenError TokenType = iota - 2
-	TokenDone
+	TokenDone TokenType = -1 - iota
+	TokenError
 )
 ```
 Constants TokenError (-2) and TokenDone (-1)
+
+#### type Tokeniser
+
+```go
+type Tokeniser struct {
+	Err error
+}
+```
+
+Tokeniser is
+
+#### func  NewByteTokeniser
+
+```go
+func NewByteTokeniser(data []byte) Tokeniser
+```
+NewByteTokeniser returns a Tokeniser which uses a byte slice.
+
+#### func  NewReaderTokeniser
+
+```go
+func NewReaderTokeniser(reader io.Reader) Tokeniser
+```
+NewReaderTokeniser returns a Tokeniser which uses an io.Reader
+
+#### func  NewStringTokeniser
+
+```go
+func NewStringTokeniser(str string) Tokeniser
+```
+NewStringTokeniser returns a Tokeniser which uses a string.
+
+#### func (*Tokeniser) Accept
+
+```go
+func (t *Tokeniser) Accept(chars string) bool
+```
+Accept returns true if the next character to be read is contained within the
+given string.
+
+Upon true, it advances the read position, otherwise the position remains the
+same.
+
+#### func (*Tokeniser) AcceptRun
+
+```go
+func (t *Tokeniser) AcceptRun(chars string) rune
+```
+AcceptRun reads from the string as long as the read character is in the given
+string.
+
+Returns the rune that stopped the run.
+
+#### func (*Tokeniser) Done
+
+```go
+func (t *Tokeniser) Done() (Token, TokenFunc)
+```
+Done is a TokenFunc that is used to indicate that there are no more tokens to
+parse.
+
+#### func (*Tokeniser) Error
+
+```go
+func (t *Tokeniser) Error() (Token, TokenFunc)
+```
+Error represents an error state for the parser.
+
+The error value should be set by calling Tokeniser.SetError and then this func
+should be called.
+
+#### func (*Tokeniser) Except
+
+```go
+func (t *Tokeniser) Except(chars string) bool
+```
+Except returns true if the next character to be read is not contained within the
+given string. Upon true, it advances the read position, otherwise the position
+remains the same.
+
+#### func (*Tokeniser) ExceptRun
+
+```go
+func (t *Tokeniser) ExceptRun(chars string) rune
+```
+ExceptRun reads from the string as long as the read character is not in the
+given string.
+
+Returns the rune that stopped the run.
+
+#### func (*Tokeniser) Get
+
+```go
+func (t *Tokeniser) Get() string
+```
+Get returns a string of everything that has been read so far and resets the
+string for the next round of parsing.
+
+#### func (*Tokeniser) GetToken
+
+```go
+func (t *Tokeniser) GetToken() (Token, error)
+```
+
+#### func (*Tokeniser) Len
+
+```go
+func (t *Tokeniser) Len() int
+```
+Len returns the number of bytes that has been read since the last Get.
+
+#### func (*Tokeniser) Peek
+
+```go
+func (t *Tokeniser) Peek() rune
+```
+Peek returns the next rune without advancing the read position.
+
+#### func (*Tokeniser) TokeniserState
+
+```go
+func (t *Tokeniser) TokeniserState(tf TokenFunc)
+```

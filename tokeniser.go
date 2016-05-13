@@ -41,6 +41,18 @@ type Tokeniser struct {
 	state TokenFunc
 }
 
+func (t *Tokeniser) GetToken() (Token, error) {
+	tk := t.get()
+	if tk.Type == TokenError {
+		return tk, t.Err
+	}
+	return tk, nil
+}
+
+func (t *Tokeniser) TokeniserState(tf TokenFunc) {
+	t.state = tf
+}
+
 func (t *Tokeniser) get() Token {
 	if t.Err == io.EOF {
 		return Token{
@@ -80,9 +92,9 @@ func (t *Tokeniser) Peek() rune {
 	return r
 }
 
-// Lexeme returns a string of everything that has been read so far and resets
+// Get returns a string of everything that has been read so far and resets
 // the string for the next round of parsing.
-func (t *Tokeniser) Lexeme() string {
+func (t *Tokeniser) Get() string {
 	return t.tokeniser.get()
 }
 

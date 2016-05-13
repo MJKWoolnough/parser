@@ -9,37 +9,63 @@ const (
 	PhraseError
 )
 
-type PhraseFunc func(*Phraser) (Phrase, PhraseFunc)
+type PhraseFunc func(*Parser) (Phrase, PhraseFunc)
 
 type Phrase struct {
 	Type PhraseType
 	Data []Token
 }
 
-type Phraser struct {
-	tokeniser   Tokeniser
+type Parser struct {
+	Tokeniser
 	state       PhraseFunc
 	tokens      []Token
 	peekedToken bool
 }
 
-func (p *Phraser) get() Token {
+func (p *Parser) GetPhrase() (Phrase, error) {
+	if p.Err == io.EOF {
+		return Phrase{
+			Type: PhraseDone,
+			Data: make([]Token, 0),
+		}, io.EOF
+	}
+	if p.state == nil {
+		p.Err = ErrNoState
+		p.state = (*Parser).Error
+	}
+	var ph Phrase
+	ph, p.state = p.state(p)
+	if ph.Type == PhraseError {
+		if p.Err == io.EOF {
+			p.Err = io.ErrUnexpectedEOF
+		}
+		return ph, p.Err
+	}
+	return ph, nil
+}
+
+func (p *Parser) PhraserState(pf PhraseFunc) {
+	p.state = pf
+}
+
+func (p *Parser) get() Token {
 	if p.peekedToken {
 		p.peekedToken = false
 		return p.tokens[len(p.tokens)-1]
 	}
-	tk := p.tokeniser.get()
+	tk := p.Tokeniser.get()
 	if tk.Type >= 0 {
 		p.tokens = append(p.tokens, tk)
 	}
 	return tk
 }
 
-func (p *Phraser) backup() {
+func (p *Parser) backup() {
 	p.peekedToken = true
 }
 
-func (p *Phraser) Accept(types ...TokenType) bool {
+func (p *Parser) Accept(types ...TokenType) bool {
 	tk := p.get()
 	for _, t := range types {
 		if tk.Type == t {
@@ -50,13 +76,13 @@ func (p *Phraser) Accept(types ...TokenType) bool {
 	return false
 }
 
-func (p *Phraser) Peek() Token {
+func (p *Parser) Peek() Token {
 	tk := p.get()
 	p.backup()
 	return tk
 }
 
-func (p *Phraser) Phrase() []Token {
+func (p *Parser) Get() []Token {
 	var toRet []Token
 	if p.peekedToken {
 		tk := p.tokens[len(p.tokens)-1]
@@ -72,7 +98,7 @@ func (p *Phraser) Phrase() []Token {
 	return toRet
 }
 
-func (p *Phraser) Len() int {
+func (p *Parser) Len() int {
 	l := len(p.tokens)
 	if p.peekedToken {
 		l--
@@ -80,7 +106,7 @@ func (p *Phraser) Len() int {
 	return l
 }
 
-func (p *Phraser) AcceptRun(types ...TokenType) TokenType {
+func (p *Parser) AcceptRun(types ...TokenType) TokenType {
 Loop:
 	for {
 		tk := p.get()
@@ -94,7 +120,7 @@ Loop:
 	}
 }
 
-func (p *Phraser) Except(types ...TokenType) bool {
+func (p *Parser) Except(types ...TokenType) bool {
 	tk := p.get()
 	for _, t := range types {
 		if tk.Type == t {
@@ -105,7 +131,7 @@ func (p *Phraser) Except(types ...TokenType) bool {
 	return true
 }
 
-func (p *Phraser) ExceptRun(types ...TokenType) TokenType {
+func (p *Parser) ExceptRun(types ...TokenType) TokenType {
 	for {
 		tk := p.get()
 		for _, t := range types {
@@ -117,19 +143,19 @@ func (p *Phraser) ExceptRun(types ...TokenType) TokenType {
 	}
 }
 
-func (p *Phraser) Done() (Phrase, PhraseFunc) {
-	p.tokeniser.Err = io.EOF
+func (p *Parser) Done() (Phrase, PhraseFunc) {
+	p.Err = io.EOF
 	return Phrase{
 		Type: PhraseDone,
 		Data: make([]Token, 0),
-	}, (*Phraser).Done
+	}, (*Parser).Done
 }
 
-func (p *Phraser) Error() (Phrase, PhraseFunc) {
+func (p *Parser) Error() (Phrase, PhraseFunc) {
 	return Phrase{
 		Type: PhraseError,
 		Data: []Token{
-			{Type: TokenError, Data: p.tokeniser.Err.Error()},
+			{Type: TokenError, Data: p.Err.Error()},
 		},
-	}, (*Phraser).Error
+	}, (*Parser).Error
 }

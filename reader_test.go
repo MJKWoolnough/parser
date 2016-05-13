@@ -28,14 +28,14 @@ func ExampleNewReaderParser() {
 	p := parser.NewReaderTokeniser(strings.NewReader("Hello, World!"))
 	alphaNum := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	p.AcceptRun(alphaNum)
-	word := p.Lexeme()
+	word := p.Get()
 	fmt.Println("got word:", word)
 
 	p.ExceptRun(alphaNum)
-	p.Lexeme()
+	p.Get()
 
 	p.AcceptRun(alphaNum)
-	word = p.Lexeme()
+	word = p.Get()
 	fmt.Println("got word:", word)
 	// Output:
 	// got word: Hello

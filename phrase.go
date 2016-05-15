@@ -53,11 +53,11 @@ func (p *Parser) get() Token {
 	if p.peekedToken {
 		p.peekedToken = false
 		return p.tokens[len(p.tokens)-1]
+	} else if len(p.tokens) > 0 && p.tokens[len(p.tokens)-1].Type < 0 {
+		return p.tokens[len(p.tokens)-1]
 	}
 	tk := p.Tokeniser.get()
-	if tk.Type >= 0 {
-		p.tokens = append(p.tokens, tk)
-	}
+	p.tokens = append(p.tokens, tk)
 	return tk
 }
 

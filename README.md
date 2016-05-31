@@ -22,78 +22,104 @@ type Parser struct {
 }
 ```
 
+Parser is a type used to get tokens or phrases (collection of token) from an an
+input
 
 #### func  New
 
 ```go
 func New(t Tokeniser) Parser
 ```
+New creates a new Parser from the given Tokeniser
 
 #### func (*Parser) Accept
 
 ```go
 func (p *Parser) Accept(types ...TokenType) bool
 ```
+Accept will accept a token with one of the given types, returning true if one is
+read and false otherwise.
 
 #### func (*Parser) AcceptRun
 
 ```go
 func (p *Parser) AcceptRun(types ...TokenType) TokenType
 ```
+AcceptRun will keep Accepting tokens as long as they match one of the given
+types.
+
+It will return the type of the token that made it stop.
 
 #### func (*Parser) Done
 
 ```go
 func (p *Parser) Done() (Phrase, PhraseFunc)
 ```
+Done is a PhraseFunc that is used to indicate that there are no more phrases to
+parse.
 
 #### func (*Parser) Error
 
 ```go
 func (p *Parser) Error() (Phrase, PhraseFunc)
 ```
+Error represents an error state for the phraser.
+
+The error value should be set in Parser.Err and then this func should be called.
 
 #### func (*Parser) Except
 
 ```go
 func (p *Parser) Except(types ...TokenType) bool
 ```
+Except will Accept a token that is not one of the types given. Returns true if
+it Accepted a token.
 
 #### func (*Parser) ExceptRun
 
 ```go
 func (p *Parser) ExceptRun(types ...TokenType) TokenType
 ```
+ExceptRun will keep Accepting tokens as long as they do not match one of the
+given types.
+
+It will return the type of the token that made it stop.
 
 #### func (*Parser) Get
 
 ```go
 func (p *Parser) Get() []Token
 ```
+Get retrieves a slice of the Tokens that have been read so far.
 
 #### func (*Parser) GetPhrase
 
 ```go
 func (p *Parser) GetPhrase() (Phrase, error)
 ```
+GetPhrase runs the state machine and retrieves a single Phrase and possibly an
+error
 
 #### func (*Parser) Len
 
 ```go
 func (p *Parser) Len() int
 ```
+Len returns how many tokens have been read.
 
 #### func (*Parser) Peek
 
 ```go
 func (p *Parser) Peek() Token
 ```
+Peek takes a look at the upcoming Token and returns it.
 
 #### func (*Parser) PhraserState
 
 ```go
 func (p *Parser) PhraserState(pf PhraseFunc)
 ```
+PhraserState allows the internal state of the Phraser to be set.
 
 #### type Phrase
 
@@ -104,6 +130,7 @@ type Phrase struct {
 }
 ```
 
+Phrase represents a collection of tokens that have meaning together
 
 #### type PhraseFunc
 
@@ -111,6 +138,8 @@ type Phrase struct {
 type PhraseFunc func(*Parser) (Phrase, PhraseFunc)
 ```
 
+PhraseFunc is the type that the worker types implement in order to be used by
+the Phraser
 
 #### type PhraseType
 
@@ -118,6 +147,9 @@ type PhraseFunc func(*Parser) (Phrase, PhraseFunc)
 type PhraseType int
 ```
 
+PhraseType represnts the type of phrase being read.
+
+Negative values are reserved for this package.
 
 ```go
 const (
@@ -125,6 +157,7 @@ const (
 	PhraseError
 )
 ```
+Constants PhraseError (-2) and PhraseDone (-1)
 
 #### type Token
 
@@ -172,7 +205,7 @@ type Tokeniser struct {
 }
 ```
 
-Tokeniser is
+Tokeniser is a state machine to generate tokens from an input
 
 #### func  NewByteTokeniser
 
@@ -231,8 +264,8 @@ func (t *Tokeniser) Error() (Token, TokenFunc)
 ```
 Error represents an error state for the parser.
 
-The error value should be set by calling Tokeniser.SetError and then this func
-should be called.
+The error value should be set in Tokeniser.Err and then this func should be
+called.
 
 #### func (*Tokeniser) Except
 
@@ -266,6 +299,8 @@ string for the next round of parsing.
 ```go
 func (t *Tokeniser) GetToken() (Token, error)
 ```
+GetToken runs the state machine and retrieves a single token and possible an
+error
 
 #### func (*Tokeniser) Len
 
@@ -286,3 +321,4 @@ Peek returns the next rune without advancing the read position.
 ```go
 func (t *Tokeniser) TokeniserState(tf TokenFunc)
 ```
+TokeniserState allows the internal state of the Tokeniser to be set

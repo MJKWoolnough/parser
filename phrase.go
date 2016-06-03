@@ -2,20 +2,29 @@ package parser
 
 import "io"
 
+// PhraseType represnts the type of phrase being read.
+//
+// Negative values are reserved for this package.
 type PhraseType int
 
+// Constants PhraseError (-2) and PhraseDone (-1)
 const (
 	PhraseDone PhraseType = -1 - iota
 	PhraseError
 )
 
+// PhraseFunc is the type that the worker types implement in order to be used
+// by the Phraser
 type PhraseFunc func(*Parser) (Phrase, PhraseFunc)
 
+// Phrase represents a collection of tokens that have meaning together
 type Phrase struct {
 	Type PhraseType
 	Data []Token
 }
 
+// Parser is a type used to get tokens or phrases (collection of token) from an
+// an input
 type Parser struct {
 	Tokeniser
 	state       PhraseFunc
@@ -23,6 +32,8 @@ type Parser struct {
 	peekedToken bool
 }
 
+// GetPhrase runs the state machine and retrieves a single Phrase and possibly
+// an error
 func (p *Parser) GetPhrase() (Phrase, error) {
 	if p.Err == io.EOF {
 		return Phrase{
@@ -45,6 +56,7 @@ func (p *Parser) GetPhrase() (Phrase, error) {
 	return ph, nil
 }
 
+// PhraserState allows the internal state of the Phraser to be set.
 func (p *Parser) PhraserState(pf PhraseFunc) {
 	p.state = pf
 }
@@ -65,6 +77,8 @@ func (p *Parser) backup() {
 	p.peekedToken = true
 }
 
+// Accept will accept a token with one of the given types, returning true if
+// one is read and false otherwise.
 func (p *Parser) Accept(types ...TokenType) bool {
 	tk := p.get()
 	for _, t := range types {
@@ -76,12 +90,14 @@ func (p *Parser) Accept(types ...TokenType) bool {
 	return false
 }
 
+// Peek takes a look at the upcoming Token and returns it.
 func (p *Parser) Peek() Token {
 	tk := p.get()
 	p.backup()
 	return tk
 }
 
+// Get retrieves a slice of the Tokens that have been read so far.
 func (p *Parser) Get() []Token {
 	var toRet []Token
 	if p.peekedToken {
@@ -98,6 +114,7 @@ func (p *Parser) Get() []Token {
 	return toRet
 }
 
+// Len returns how many tokens have been read.
 func (p *Parser) Len() int {
 	l := len(p.tokens)
 	if p.peekedToken {
@@ -106,6 +123,10 @@ func (p *Parser) Len() int {
 	return l
 }
 
+// AcceptRun will keep Accepting tokens as long as they match one of the
+// given types.
+//
+// It will return the type of the token that made it stop.
 func (p *Parser) AcceptRun(types ...TokenType) TokenType {
 Loop:
 	for {
@@ -120,6 +141,8 @@ Loop:
 	}
 }
 
+// Except will Accept a token that is not one of the types given. Returns true
+// if it Accepted a token.
 func (p *Parser) Except(types ...TokenType) bool {
 	tk := p.get()
 	for _, t := range types {
@@ -131,6 +154,10 @@ func (p *Parser) Except(types ...TokenType) bool {
 	return true
 }
 
+// ExceptRun will keep Accepting tokens as long as they do not match one of the
+// given types.
+//
+// It will return the type of the token that made it stop.
 func (p *Parser) ExceptRun(types ...TokenType) TokenType {
 	for {
 		tk := p.get()
@@ -143,6 +170,8 @@ func (p *Parser) ExceptRun(types ...TokenType) TokenType {
 	}
 }
 
+// Done is a PhraseFunc that is used to indicate that there are no more phrases
+// to parse.
 func (p *Parser) Done() (Phrase, PhraseFunc) {
 	p.Err = io.EOF
 	return Phrase{
@@ -151,6 +180,10 @@ func (p *Parser) Done() (Phrase, PhraseFunc) {
 	}, (*Parser).Done
 }
 
+// Error represents an error state for the phraser.
+//
+// The error value should be set in Parser.Err and then this func should be
+// called.
 func (p *Parser) Error() (Phrase, PhraseFunc) {
 	return Phrase{
 		Type: PhraseError,

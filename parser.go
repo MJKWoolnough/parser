@@ -6,6 +6,7 @@ import (
 	"io"
 )
 
+// New creates a new Parser from the given Tokeniser
 func New(t Tokeniser) Parser {
 	return Parser{Tokeniser: t}
 }

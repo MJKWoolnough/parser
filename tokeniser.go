@@ -34,13 +34,15 @@ type tokeniser interface {
 	next() rune
 }
 
-// Tokeniser is
+// Tokeniser is a state machine to generate tokens from an input
 type Tokeniser struct {
 	tokeniser
 	Err   error
 	state TokenFunc
 }
 
+// GetToken runs the state machine and retrieves a single token and possible an
+// error
 func (t *Tokeniser) GetToken() (Token, error) {
 	tk := t.get()
 	if tk.Type == TokenError {
@@ -49,6 +51,7 @@ func (t *Tokeniser) GetToken() (Token, error) {
 	return tk, nil
 }
 
+// TokeniserState allows the internal state of the Tokeniser to be set
 func (t *Tokeniser) TokeniserState(tf TokenFunc) {
 	t.state = tf
 }
@@ -153,8 +156,8 @@ func (t *Tokeniser) Done() (Token, TokenFunc) {
 
 // Error represents an error state for the parser.
 //
-// The error value should be set by calling Tokeniser.SetError and then this
-// func should be called.
+// The error value should be set in Tokeniser.Err and then this func should be
+// called.
 func (t *Tokeniser) Error() (Token, TokenFunc) {
 	return Token{
 		Type: TokenError,

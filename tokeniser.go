@@ -159,6 +159,9 @@ func (t *Tokeniser) Done() (Token, TokenFunc) {
 // The error value should be set in Tokeniser.Err and then this func should be
 // called.
 func (t *Tokeniser) Error() (Token, TokenFunc) {
+	if t.Err == nil {
+		t.Err = ErrUnknownError
+	}
 	return Token{
 		Type: TokenError,
 		Data: t.Err.Error(),
@@ -167,5 +170,6 @@ func (t *Tokeniser) Error() (Token, TokenFunc) {
 
 // Errors
 var (
-	ErrNoState = errors.New("no state")
+	ErrNoState      = errors.New("no state")
+	ErrUnknownError = errors.New("unknown error")
 )

@@ -185,6 +185,9 @@ func (p *Parser) Done() (Phrase, PhraseFunc) {
 // The error value should be set in Parser.Err and then this func should be
 // called.
 func (p *Parser) Error() (Phrase, PhraseFunc) {
+	if p.Err == nil {
+		p.Err = ErrUnknownError
+	}
 	return Phrase{
 		Type: PhraseError,
 		Data: []Token{

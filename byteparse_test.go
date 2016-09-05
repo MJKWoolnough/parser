@@ -123,7 +123,7 @@ func TestByteExceptRun(t *testing.T) {
 	testTokeniserExceptRun(t, parser.NewByteTokeniser([]byte("12345ABC\n67890DEF\nOH MY!")))
 }
 
-func ExampleNewByteParser() {
+func ExampleNewByteTokeniser() {
 	p := parser.NewByteTokeniser([]byte("Hello, World!"))
 	alphaNum := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	p.AcceptRun(alphaNum)

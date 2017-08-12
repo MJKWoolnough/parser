@@ -9,7 +9,8 @@ io.Readers
 
 ```go
 var (
-	ErrNoState = errors.New("no state")
+	ErrNoState      = errors.New("no state")
+	ErrUnknownError = errors.New("unknown error")
 )
 ```
 Errors

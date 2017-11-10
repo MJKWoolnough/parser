@@ -81,7 +81,7 @@ func (t *Tokeniser) get() Token {
 // Upon true, it advances the read position, otherwise the position remains the
 // same.
 func (t *Tokeniser) Accept(chars string) bool {
-	if strings.IndexRune(chars, t.next()) < 0 {
+	if !strings.ContainsRune(chars, t.next()) {
 		t.backup()
 		return false
 	}
@@ -124,7 +124,7 @@ func (t *Tokeniser) AcceptRun(chars string) rune {
 // Upon true, it advances the read position, otherwise the position remains the
 // same.
 func (t *Tokeniser) Except(chars string) bool {
-	if r := t.next(); r == -1 || strings.IndexRune(chars, r) >= 0 {
+	if r := t.next(); r == -1 || strings.ContainsRune(chars, r) {
 		t.backup()
 		return false
 	}
@@ -137,7 +137,7 @@ func (t *Tokeniser) Except(chars string) bool {
 // Returns the rune that stopped the run.
 func (t *Tokeniser) ExceptRun(chars string) rune {
 	for {
-		if r := t.next(); r == -1 || strings.IndexRune(chars, r) >= 0 {
+		if r := t.next(); r == -1 || strings.ContainsRune(chars, r) {
 			t.backup()
 			return r
 		}

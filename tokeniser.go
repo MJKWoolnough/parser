@@ -112,7 +112,7 @@ func (t *Tokeniser) Len() int {
 // Returns the rune that stopped the run.
 func (t *Tokeniser) AcceptRun(chars string) rune {
 	for {
-		if c := t.next(); strings.IndexRune(chars, c) < 0 {
+		if c := t.next(); !strings.ContainsRune(chars, c) {
 			t.backup()
 			return c
 		}

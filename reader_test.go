@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/MJKWoolnough/parser"
+	"vimagination.zapto.org/parser"
 )
 
 func TestReaderAccept(t *testing.T) {

@@ -1,5 +1,5 @@
 // Package parser is a simple helper package for parsing strings, byte slices and io.Readers
-package parser
+package parser // import "vimagination.zapto.org/parser"
 
 import (
 	"bufio"

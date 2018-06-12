@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/MJKWoolnough/parser"
+	"vimagination.zapto.org/parser"
 )
 
 func testTokeniserAccept(t *testing.T, p parser.Tokeniser) {

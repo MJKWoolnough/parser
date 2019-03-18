@@ -1,6 +1,6 @@
 # parser
 --
-    import "github.com/MJKWoolnough/parser"
+    import "vimagination.zapto.org/parser"
 
 Package parser is a simple helper package for parsing strings, byte slices and
 io.Readers
@@ -100,6 +100,17 @@ func (p *Parser) GetPhrase() (Phrase, error)
 ```
 GetPhrase runs the state machine and retrieves a single Phrase and possibly an
 error
+
+#### func (*Parser) GetToken
+
+```go
+func (p *Parser) GetToken() (Token, error)
+```
+GetToken runs the state machine and retrieves a single Token and possibly an
+error.
+
+If a Token has already been 'peek'ed, that token will be returned without
+running the state machine
 
 #### func (*Parser) Len
 

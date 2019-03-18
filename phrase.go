@@ -56,6 +56,19 @@ func (p *Parser) GetPhrase() (Phrase, error) {
 	return ph, nil
 }
 
+// GetToken runs the state machine and retrieves a single Token and possibly
+// an error.
+//
+// If a Token has already been 'peek'ed, that token will be returned without
+// running the state machine
+func (p *Parser) GetToken() (Token, error) {
+	tk := p.get()
+	if tk.Type == TokenError {
+		return tk, p.Err
+	}
+	return tk, nil
+}
+
 // PhraserState allows the internal state of the Phraser to be set.
 func (p *Parser) PhraserState(pf PhraseFunc) {
 	p.state = pf

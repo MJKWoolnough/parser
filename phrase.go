@@ -154,6 +154,19 @@ Loop:
 	}
 }
 
+// AcceptToken will accept a token matching one of the ones provided exactly,
+// returning true if one is read and false otherwise.
+func (p *Parser) AcceptToken(tokens ...Token) bool {
+	tk := p.get()
+	for _, ttk := range tokens {
+		if ttk == tk {
+			return true
+		}
+	}
+	p.backup()
+	return false
+}
+
 // Except will Accept a token that is not one of the types given. Returns true
 // if it Accepted a token.
 func (p *Parser) Except(types ...TokenType) bool {

@@ -51,6 +51,14 @@ types.
 
 It will return the type of the token that made it stop.
 
+#### func (*Parser) AcceptToken
+
+```go
+func (p *Parser) AcceptToken(tokens ...Token) bool
+```
+AcceptToken will accept a token matching one of the ones provided exactly,
+returning true if one is read and false otherwise.
+
 #### func (*Parser) Done
 
 ```go

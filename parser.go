@@ -1,4 +1,4 @@
-// Package parser is a simple helper package for parsing strings, byte slices and io.Readers
+// Package parser is a simple helper package for parsing strings, byte slices and io.Readers.
 package parser // import "vimagination.zapto.org/parser"
 
 import (
@@ -6,7 +6,7 @@ import (
 	"io"
 )
 
-// New creates a new Parser from the given Tokeniser
+// New creates a new Parser from the given Tokeniser.
 func New(t Tokeniser) Parser {
 	return Parser{Tokeniser: t}
 }
@@ -29,7 +29,7 @@ func NewByteTokeniser(data []byte) Tokeniser {
 	}
 }
 
-// NewReaderTokeniser returns a Tokeniser which uses an io.Reader
+// NewReaderTokeniser returns a Tokeniser which uses an io.Reader.
 func NewReaderTokeniser(reader io.Reader) Tokeniser {
 	return Tokeniser{
 		tokeniser: &readerParser{

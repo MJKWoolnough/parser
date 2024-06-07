@@ -10,14 +10,19 @@ type byteParser struct {
 func (p *byteParser) next() rune {
 	if p.pos == len(p.data) {
 		p.width = 0
+
 		return -1
 	}
+
 	r, s := utf8.DecodeRune(p.data[p.pos:])
+
 	if r == utf8.RuneError && s == 1 {
 		r = rune(p.data[p.pos])
 	}
+
 	p.pos += s
 	p.width = s
+
 	return r
 }
 
@@ -33,6 +38,7 @@ func (p *byteParser) get() string {
 	p.data = p.data[p.pos:]
 	p.pos = 0
 	p.width = 0
+
 	return string(s)
 }
 

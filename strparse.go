@@ -10,14 +10,19 @@ type strParser struct {
 func (p *strParser) next() rune {
 	if p.pos == len(p.str) {
 		p.width = 0
+
 		return -1
 	}
+
 	r, s := utf8.DecodeRuneInString(p.str[p.pos:])
+
 	if r == utf8.RuneError && s == 1 {
 		r = rune(p.str[p.pos])
 	}
+
 	p.pos += s
 	p.width = s
+
 	return r
 }
 
@@ -33,6 +38,7 @@ func (p *strParser) get() string {
 	p.str = p.str[p.pos:]
 	p.pos = 0
 	p.width = 0
+
 	return s
 }
 

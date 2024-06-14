@@ -1,6 +1,9 @@
 package parser
 
-import "io"
+import (
+	"errors"
+	"io"
+)
 
 // PhraseType represnts the type of phrase being read.
 //
@@ -35,7 +38,7 @@ type Parser struct {
 // GetPhrase runs the state machine and retrieves a single Phrase and possibly
 // an error.
 func (p *Parser) GetPhrase() (Phrase, error) {
-	if p.Err == io.EOF {
+	if errors.Is(p.Err, io.EOF) {
 		return Phrase{
 			Type: PhraseDone,
 			Data: make([]Token, 0),
@@ -52,7 +55,7 @@ func (p *Parser) GetPhrase() (Phrase, error) {
 	ph, p.state = p.state(p)
 
 	if ph.Type == PhraseError {
-		if p.Err == io.EOF {
+		if errors.Is(p.Err, io.EOF) {
 			p.Err = io.ErrUnexpectedEOF
 		}
 

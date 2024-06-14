@@ -64,7 +64,7 @@ func (t *Tokeniser) TokeniserState(tf TokenFunc) {
 }
 
 func (t *Tokeniser) get() Token {
-	if t.Err == io.EOF {
+	if errors.Is(t.Err, io.EOF) {
 		return Token{
 			Type: TokenDone,
 			Data: "",
@@ -80,7 +80,7 @@ func (t *Tokeniser) get() Token {
 
 	tk, t.state = t.state(t)
 
-	if tk.Type == TokenError && t.Err == io.EOF {
+	if tk.Type == TokenError && errors.Is(t.Err, io.EOF) {
 		t.Err = io.ErrUnexpectedEOF
 	}
 

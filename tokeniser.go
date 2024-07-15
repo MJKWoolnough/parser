@@ -163,6 +163,22 @@ func (t *Tokeniser) ExceptRun(chars string) rune {
 	}
 }
 
+// Return simplifies the returning from TokenFns, taking a TokenType and a next
+// TokenFn, default to Done.
+//
+// The returned token is of the type specified with the data set to the output
+// of t.Get().
+func (t *Tokeniser) Return(typ TokenType, fn TokenFunc) (Token, TokenFunc) {
+	if fn == nil {
+		fn = (*Tokeniser).Done
+	}
+
+	return Token{
+		Type: typ,
+		Data: t.Get(),
+	}, fn
+}
+
 // Done is a TokenFunc that is used to indicate that there are no more tokens to
 // parse.
 func (t *Tokeniser) Done() (Token, TokenFunc) {

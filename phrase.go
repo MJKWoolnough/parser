@@ -229,6 +229,22 @@ func (p *Parser) ExceptRun(types ...TokenType) TokenType {
 	}
 }
 
+// Return simplifies the returning from PhraseFns, taking a PhraseType and a
+// next TokenFn, default to Done.
+//
+// The returned phrase is of the type specified with the data set to the output
+// of p.Get().
+func (p *Parser) Return(typ PhraseType, fn PhraseFunc) (Phrase, PhraseFunc) {
+	if fn == nil {
+		fn = (*Parser).Done
+	}
+
+	return Phrase{
+		Type: typ,
+		Data: p.Get(),
+	}, fn
+}
+
 // Done is a PhraseFunc that is used to indicate that there are no more phrases
 // to parse.
 func (p *Parser) Done() (Phrase, PhraseFunc) {

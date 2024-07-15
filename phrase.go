@@ -120,6 +120,11 @@ func (p *Parser) Accept(types ...TokenType) bool {
 	return false
 }
 
+// Next returns the next Token and advances the read position.
+func (p *Parser) Next() Token {
+	return p.get()
+}
+
 // Peek takes a look at the upcoming Token and returns it.
 func (p *Parser) Peek() Token {
 	tk := p.get()

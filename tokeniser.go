@@ -102,6 +102,11 @@ func (t *Tokeniser) Accept(chars string) bool {
 	return true
 }
 
+// Next returns the next rune and advances the read position.
+func (t *Tokeniser) Next() rune {
+	return t.next()
+}
+
 // Peek returns the next rune without advancing the read position.
 func (t *Tokeniser) Peek() rune {
 	r := t.next()

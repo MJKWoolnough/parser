@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-// PhraseType represnts the type of phrase being read.
+// PhraseType represents the type of phrase being read.
 //
 // Negative values are reserved for this package.
 type PhraseType int
@@ -27,7 +27,7 @@ type Phrase struct {
 }
 
 // Parser is a type used to get tokens or phrases (collection of token) from an
-// an input.
+// input.
 type Parser struct {
 	Tokeniser
 	state       PhraseFunc

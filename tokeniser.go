@@ -184,6 +184,8 @@ func (t *Tokeniser) Return(typ TokenType, fn TokenFunc) (Token, TokenFunc) {
 	}, fn
 }
 
+// ReturnError simplifies the handling of errors, setting the error and calling
+// Tokeniser.Error().
 func (t *Tokeniser) ReturnError(err error) (Token, TokenFunc) {
 	t.Err = err
 

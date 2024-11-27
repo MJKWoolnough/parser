@@ -80,6 +80,8 @@ func (p *Parser) GetToken() (Token, error) {
 	return tk, nil
 }
 
+// Iter yields each Phrase as it's returned, stopping after yielding a
+// PhraseDone or PhraseError Phrase.
 func (p *Parser) Iter(yield func(Phrase) bool) {
 	for {
 		if ph, _ := p.GetPhrase(); !yield(ph) || ph.Type == PhraseDone || ph.Type == PhraseError {

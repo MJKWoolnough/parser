@@ -80,6 +80,14 @@ func (p *Parser) GetToken() (Token, error) {
 	return tk, nil
 }
 
+func (p *Parser) Iter(yield func(Phrase) bool) {
+	for {
+		if ph, _ := p.GetPhrase(); !yield(ph) || ph.Type == PhraseDone || ph.Type == PhraseError {
+			break
+		}
+	}
+}
+
 // PhraserState allows the internal state of the Phraser to be set.
 func (p *Parser) PhraserState(pf PhraseFunc) {
 	p.state = pf

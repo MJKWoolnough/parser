@@ -120,6 +120,14 @@ error.
 If a Token has already been 'peek'ed, that token will be returned without
 running the state machine.
 
+#### func (*Parser) Iter
+
+```go
+func (p *Parser) Iter(yield func(Phrase) bool)
+```
+Iter yields each Phrase as it's returned, stopping after yielding a PhraseDone
+or PhraseError Phrase.
+
 #### func (*Parser) Len
 
 ```go
@@ -158,6 +166,14 @@ TokenFn, default to Done.
 
 The returned phrase is of the type specified with the data set to the output of
 p.Get().
+
+#### func (*Parser) ReturnError
+
+```go
+func (p *Parser) ReturnError(err error) (Phrase, PhraseFunc)
+```
+ReturnError simplifies the handling of errors, setting the error and calling
+Phraser.Error().
 
 #### type Phrase
 
@@ -347,6 +363,14 @@ func (t *Tokeniser) GetToken() (Token, error)
 GetToken runs the state machine and retrieves a single token and possible an
 error.
 
+#### func (*Tokeniser) Iter
+
+```go
+func (t *Tokeniser) Iter(yield func(Token) bool)
+```
+Iter yields each token as it's returned, stopping after yielding a TokenDone or
+TokenError Token.
+
 #### func (*Tokeniser) Len
 
 ```go
@@ -378,6 +402,14 @@ TokenFn, default to Done.
 
 The returned token is of the type specified with the data set to the output of
 t.Get().
+
+#### func (*Tokeniser) ReturnError
+
+```go
+func (t *Tokeniser) ReturnError(err error) (Token, TokenFunc)
+```
+ReturnError simplifies the handling of errors, setting the error and calling
+Tokeniser.Error().
 
 #### func (*Tokeniser) TokeniserState
 

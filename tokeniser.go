@@ -53,6 +53,8 @@ func (t *Tokeniser) GetToken() (Token, error) {
 	return tk, nil
 }
 
+// Iter yields each token as it's returned, stopping after yielding a TokenDone
+// or TokenError Token.
 func (t *Tokeniser) Iter(yield func(Token) bool) {
 	for {
 		if tk := t.get(); !yield(tk) || tk.Type == TokenDone || tk.Type == TokenError {

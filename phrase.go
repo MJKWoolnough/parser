@@ -250,6 +250,8 @@ func (p *Parser) Return(typ PhraseType, fn PhraseFunc) (Phrase, PhraseFunc) {
 	}, fn
 }
 
+// ReturnError simplifies the handling of errors, setting the error and calling
+// Phraser.Error().
 func (p *Parser) ReturnError(err error) (Phrase, PhraseFunc) {
 	p.Err = err
 

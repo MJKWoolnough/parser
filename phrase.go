@@ -250,6 +250,12 @@ func (p *Parser) Return(typ PhraseType, fn PhraseFunc) (Phrase, PhraseFunc) {
 	}, fn
 }
 
+func (p *Parser) ReturnError(err error) (Phrase, PhraseFunc) {
+	p.Err = err
+
+	return p.Error()
+}
+
 // Done is a PhraseFunc that is used to indicate that there are no more phrases
 // to parse.
 func (p *Parser) Done() (Phrase, PhraseFunc) {

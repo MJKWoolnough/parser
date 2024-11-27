@@ -184,6 +184,12 @@ func (t *Tokeniser) Return(typ TokenType, fn TokenFunc) (Token, TokenFunc) {
 	}, fn
 }
 
+func (t *Tokeniser) ReturnError(err error) (Token, TokenFunc) {
+	t.Err = err
+
+	return t.Error()
+}
+
 // Done is a TokenFunc that is used to indicate that there are no more tokens to
 // parse.
 func (t *Tokeniser) Done() (Token, TokenFunc) {

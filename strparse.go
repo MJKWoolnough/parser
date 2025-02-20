@@ -15,7 +15,6 @@ func (p *strParser) next() rune {
 	}
 
 	r, s := utf8.DecodeRuneInString(p.str[p.pos:])
-
 	if r == utf8.RuneError && s == 1 {
 		r = rune(p.str[p.pos])
 	}

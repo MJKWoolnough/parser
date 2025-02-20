@@ -22,10 +22,11 @@ func (r *readerParser) next() rune {
 
 	if ru == utf8.RuneError && s == 1 {
 		r.reader.UnreadRune()
-		b, _ := r.reader.ReadByte()
-		r.reader.ReadRune()
 
+		b, _ := r.reader.ReadByte()
 		ru = rune(b)
+
+		r.reader.ReadRune()
 	}
 
 	r.width = s
@@ -38,14 +39,16 @@ func (r *readerParser) backup() {
 	if r.width > 0 {
 		r.buf.Truncate(r.buf.Len() - r.width)
 		r.reader.UnreadRune()
+
 		r.width = 0
 	}
 }
 
 func (r *readerParser) get() string {
 	s := r.buf.String()
-	r.buf.Reset()
 	r.width = 0
+
+	r.buf.Reset()
 
 	return s
 }

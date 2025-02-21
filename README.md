@@ -213,6 +213,20 @@ const (
 ```
 Constants PhraseError (-2) and PhraseDone (-1).
 
+#### type State
+
+```go
+type State interface {
+	// Reset returns the byte stream to the position it was in when this
+	// object was created.
+	//
+	// Only valid until Tokeniser.Get is called.
+	Reset() bool
+}
+```
+
+State represents a position in the byte stream of the Tokeniser.
+
 #### type Token
 
 ```go
@@ -303,6 +317,22 @@ string.
 
 Returns the rune that stopped the run.
 
+#### func (*Tokeniser) AcceptString
+
+```go
+func (t *Tokeniser) AcceptString(str string, caseInsensitive bool) int
+```
+AcceptString attempts to accept each character from the given string, in order,
+returning the number of characters accepted before a failure.
+
+#### func (*Tokeniser) AcceptWord
+
+```go
+func (t *Tokeniser) AcceptWord(words []string, caseInsensitive bool) string
+```
+AcceptWord attempts to parse one of the words (string of characters) provided in
+the slice.
+
 #### func (*Tokeniser) Done
 
 ```go
@@ -392,6 +422,14 @@ func (t *Tokeniser) Peek() rune
 ```
 Peek returns the next rune without advancing the read position.
 
+#### func (*Tokeniser) Reset
+
+```go
+func (t *Tokeniser) Reset()
+```
+Reset restores the state to after the last Get() call (or init, it Get() has not
+been called).
+
 #### func (*Tokeniser) Return
 
 ```go
@@ -410,6 +448,14 @@ func (t *Tokeniser) ReturnError(err error) (Token, TokenFunc)
 ```
 ReturnError simplifies the handling of errors, setting the error and calling
 Tokeniser.Error().
+
+#### func (*Tokeniser) State
+
+```go
+func (t *Tokeniser) State() State
+```
+Retrieve the current Tokeniser state that allows you to reset to that point.
+State is only valid until next 'Get' call.
 
 #### func (*Tokeniser) TokeniserState
 

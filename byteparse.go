@@ -49,3 +49,26 @@ func (p *byteParser) reset() {
 	p.pos = 0
 	p.width = 0
 }
+
+type byteState struct {
+	b     *byteParser
+	state byteParser
+}
+
+func (p *byteParser) state() State {
+	return &byteState{
+		b:     p,
+		state: *p,
+	}
+}
+
+func (b *byteState) Reset() bool {
+	if string(b.b.data) != string(b.state.data) {
+		return false
+	}
+
+	b.b.pos = b.state.pos
+	b.b.width = b.state.width
+
+	return true
+}

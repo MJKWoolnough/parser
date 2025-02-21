@@ -49,3 +49,26 @@ func (p *strParser) reset() {
 	p.pos = 0
 	p.width = 0
 }
+
+type strState struct {
+	s     *strParser
+	state strParser
+}
+
+func (p *strParser) state() State {
+	return &strState{
+		s:     p,
+		state: *p,
+	}
+}
+
+func (s *strState) Reset() bool {
+	if s.s.str != s.state.str {
+		return false
+	}
+
+	s.s.pos = s.state.pos
+	s.s.width = s.state.width
+
+	return true
+}

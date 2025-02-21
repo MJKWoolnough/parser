@@ -27,12 +27,22 @@ type Token struct {
 // the tokeniser.
 type TokenFunc func(*Tokeniser) (Token, TokenFunc)
 
+// State represents a position in the byte stream of the Tokeniser.
+type State interface {
+	// Reset returns the byte stream to the position it was in when this
+	// object was created.
+	//
+	// Only valid until Tokeniser.Get is called.
+	Reset() bool
+}
+
 type tokeniser interface {
 	backup()
 	get() string
 	length() int
 	next() rune
 	reset()
+	state() State
 }
 
 // Tokeniser is a state machine to generate tokens from an input.
@@ -169,6 +179,12 @@ func (t *Tokeniser) Except(chars string) bool {
 // not been called).
 func (t *Tokeniser) Reset() {
 	t.reset()
+}
+
+// Retrieve the current Tokeniser state that allows you to reset to that point.
+// State is only valid until next 'Get' call.
+func (t *Tokeniser) State() State {
+	return t.tokeniser.state()
 }
 
 // ExceptRun reads from the string as long as the read character is not in the

@@ -8,6 +8,8 @@ import (
 )
 
 func testTokeniserAccept(t *testing.T, p parser.Tokeniser) {
+	t.Helper()
+
 	p.Accept("ABCD")
 	if s := p.Get(); s != "A" {
 		t.Errorf("expecting \"A\", got %q", s)
@@ -40,6 +42,8 @@ func TestByteAccept(t *testing.T) {
 }
 
 func testTokeniserAcceptRun(t *testing.T, p parser.Tokeniser) {
+	t.Helper()
+
 	p.AcceptRun("0123456789")
 	if s := p.Get(); s != "123" {
 		t.Errorf("expecting \"123\", got %q", s)
@@ -67,6 +71,8 @@ func TestByteAcceptRun(t *testing.T) {
 }
 
 func testTokeniserExcept(t *testing.T, p parser.Tokeniser) {
+	t.Helper()
+
 	p.Except("1")
 	if s := p.Get(); s != "" {
 		t.Errorf("expecting \"\", got %q", s)
@@ -98,6 +104,8 @@ func TestByteExcept(t *testing.T) {
 }
 
 func testTokeniserExceptRun(t *testing.T, p parser.Tokeniser) {
+	t.Helper()
+
 	p.ExceptRun("\n")
 	if s := p.Get(); s != "12345ABC" {
 		t.Errorf("expecting \"12345ABC\", got %q", s)

@@ -44,3 +44,8 @@ func (p *strParser) get() string {
 func (p *strParser) length() int {
 	return p.pos
 }
+
+func (p *strParser) reset() {
+	p.pos = 0
+	p.width = 0
+}

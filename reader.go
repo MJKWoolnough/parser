@@ -12,21 +12,18 @@ type readerParser struct {
 }
 
 func (r *readerParser) next() rune {
-	if r.pos < len(r.buf) {
-		ru := r.buf[r.pos]
-		r.pos++
-
-		return ru
-	}
-
 	ru, s, err := r.reader.ReadRune()
 	if err != nil {
-		ru = -1
+		return -1
 	}
 
 	if ru == utf8.RuneError && s == 1 {
+		r.reader.UnreadRune()
+
 		b, _ := r.reader.ReadByte()
 		ru = rune(b)
+
+		r.reader.ReadRune()
 	}
 
 	r.buf = append(r.buf, ru)
@@ -50,16 +47,9 @@ func (r *readerParser) get() string {
 }
 
 func (r *readerParser) length() int {
-	l := 0
+	return r.pos
+}
 
-	for _, r := range r.buf[:r.pos] {
-		rl := utf8.RuneLen(r)
-		if rl > 0 {
-			l += rl
-		} else {
-			l++
-		}
-	}
-
-	return l
+func (r *readerParser) reset() {
+	r.pos = 0
 }

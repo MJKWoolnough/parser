@@ -32,6 +32,7 @@ type tokeniser interface {
 	get() string
 	length() int
 	next() rune
+	reset()
 }
 
 // Tokeniser is a state machine to generate tokens from an input.
@@ -162,6 +163,12 @@ func (t *Tokeniser) Except(chars string) bool {
 	}
 
 	return true
+}
+
+// Reset restores the state to after the last Get() call (or init, it Get() has
+// not been called).
+func (t *Tokeniser) Reset() {
+	t.reset()
 }
 
 // ExceptRun reads from the string as long as the read character is not in the

@@ -194,10 +194,10 @@ func runeComparison(a, b rune, caseInsensitive bool) bool {
 func (t *Tokeniser) AcceptWord(words []string, caseInsensitive bool) string {
 	words = slices.Clone(words)
 
-	return t.acceptWords(words, caseInsensitive)
+	return t.acceptWord(words, caseInsensitive)
 }
 
-func (t *Tokeniser) acceptWords(words []string, caseInsensitive bool) string {
+func (t *Tokeniser) acceptWord(words []string, caseInsensitive bool) string {
 	s := t.State()
 	var sb strings.Builder
 
@@ -222,7 +222,7 @@ func (t *Tokeniser) acceptWords(words []string, caseInsensitive bool) string {
 
 				if runeComparison(char, r, caseInsensitive) {
 					word = word[s:]
-					found = true
+					found = word == ""
 
 					newWords = append(newWords, word)
 				}
@@ -233,7 +233,7 @@ func (t *Tokeniser) acceptWords(words []string, caseInsensitive bool) string {
 
 		if found {
 			if len(words) > 0 {
-				sb.WriteString(t.acceptWords(words, caseInsensitive))
+				sb.WriteString(t.acceptWord(words, caseInsensitive))
 			}
 
 			return sb.String()

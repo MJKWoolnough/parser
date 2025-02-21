@@ -42,3 +42,52 @@ func TestTokeniserAcceptString(t *testing.T) {
 		}
 	}
 }
+
+func TestTokeniserAcceptWord(t *testing.T) {
+	p := NewStringTokeniser("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+	for n, test := range [...]struct {
+		Words           []string
+		Read            string
+		CaseInsensitive bool
+	}{
+		{},
+		{
+			Words: []string{"Z"},
+		},
+		{
+			Words: []string{"Z", "Y"},
+		},
+		{
+			Words: []string{"A"},
+			Read:  "A",
+		},
+		{
+			Words: []string{"BD"},
+		},
+		{
+			Words: []string{"BD", "BE"},
+		},
+		{
+			Words: []string{"BCD", "BCE"},
+			Read:  "BCD",
+		},
+		{
+			Words: []string{"EFH", "EFG"},
+			Read:  "EFG",
+		},
+		{
+			Words: []string{"HIJ", "HIJK"},
+			Read:  "HIJK",
+		},
+		{
+			Words:           []string{"LMNOP", "LMOPQ", "LmNoPqR"},
+			Read:            "LMNOPQR",
+			CaseInsensitive: true,
+		},
+	} {
+		if read := p.AcceptWord(test.Words, test.CaseInsensitive); read != test.Read {
+			t.Errorf("test %d: expecting to parse %q, parsed %q", n+1, test.Read, read)
+		}
+	}
+}

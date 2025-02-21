@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"strings"
+	"unicode"
 )
 
 // TokenType represents the type of token being read.
@@ -159,6 +160,20 @@ func (t *Tokeniser) AcceptRun(chars string) rune {
 			return c
 		}
 	}
+}
+
+// AcceptString attempts to accept each character from the given string, in
+// order, returning the number of characters accepted before a failure.
+func (t *Tokeniser) AcceptString(str string, caseInsensitive bool) int {
+	for n, r := range str {
+		if p := t.Peek(); caseInsensitive && unicode.SimpleFold(p) != unicode.SimpleFold(r) || !caseInsensitive && p != r {
+			return n
+		}
+
+		t.Next()
+	}
+
+	return len(str)
 }
 
 // Except returns true if the next character to be read is not contained within

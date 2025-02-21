@@ -168,7 +168,7 @@ func (t *Tokeniser) AcceptRun(chars string) rune {
 // order, returning the number of characters accepted before a failure.
 func (t *Tokeniser) AcceptString(str string, caseInsensitive bool) int {
 	for n, r := range str {
-		if p := t.Peek(); !runeComparison(p, r, caseInsensitive) {
+		if p := t.Peek(); p < 0 || !runeComparison(p, r, caseInsensitive) {
 			return n
 		}
 
@@ -180,10 +180,13 @@ func (t *Tokeniser) AcceptString(str string, caseInsensitive bool) int {
 
 func runeComparison(a, b rune, caseInsensitive bool) bool {
 	if caseInsensitive {
-		return unicode.SimpleFold(a) != unicode.SimpleFold(b)
+		al := unicode.SimpleFold(a)
+		bl := unicode.SimpleFold(b)
+
+		return a == b || a == bl || bl == a || al == bl
 	}
 
-	return a != b
+	return a == b
 }
 
 // AcceptWord attempts to parse one of the words (string of characters)

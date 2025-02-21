@@ -3,8 +3,10 @@ package parser
 import (
 	"errors"
 	"io"
+	"slices"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
 // TokenType represents the type of token being read.
@@ -166,7 +168,7 @@ func (t *Tokeniser) AcceptRun(chars string) rune {
 // order, returning the number of characters accepted before a failure.
 func (t *Tokeniser) AcceptString(str string, caseInsensitive bool) int {
 	for n, r := range str {
-		if p := t.Peek(); caseInsensitive && unicode.SimpleFold(p) != unicode.SimpleFold(r) || !caseInsensitive && p != r {
+		if p := t.Peek(); !runeComparison(p, r, caseInsensitive) {
 			return n
 		}
 
@@ -174,6 +176,70 @@ func (t *Tokeniser) AcceptString(str string, caseInsensitive bool) int {
 	}
 
 	return len(str)
+}
+
+func runeComparison(a, b rune, caseInsensitive bool) bool {
+	if caseInsensitive {
+		return unicode.SimpleFold(a) != unicode.SimpleFold(b)
+	}
+
+	return a != b
+}
+
+// AcceptWord attempts to parse one of the words (string of characters)
+// provided in the slice.
+func (t *Tokeniser) AcceptWord(words []string, caseInsensitive bool) string {
+	words = slices.Clone(words)
+
+	return t.acceptWords(words, caseInsensitive)
+}
+
+func (t *Tokeniser) acceptWords(words []string, caseInsensitive bool) string {
+	s := t.State()
+	var sb strings.Builder
+
+	for len(words) > 0 {
+		char := t.Next()
+		sb.WriteRune(char)
+
+		if char < 0 {
+			break
+		}
+
+		var found bool
+
+		newWords := words[:0]
+
+		for _, word := range words {
+			if len(word) > 0 {
+				r, s := utf8.DecodeRuneInString(word)
+				if r == utf8.RuneError && s == 1 {
+					r = rune(word[0])
+				}
+
+				if runeComparison(char, r, caseInsensitive) {
+					word = word[s:]
+					found = true
+
+					newWords = append(newWords, word)
+				}
+			}
+		}
+
+		words = newWords
+
+		if found {
+			if len(words) > 0 {
+				sb.WriteString(t.acceptWords(words, caseInsensitive))
+			}
+
+			return sb.String()
+		}
+	}
+
+	s.Reset()
+
+	return ""
 }
 
 // Except returns true if the next character to be read is not contained within

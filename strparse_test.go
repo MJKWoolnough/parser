@@ -23,6 +23,10 @@ func TestStrExceptRun(t *testing.T) {
 	testTokeniserExceptRun(t, parser.NewStringTokeniser("12345ABC\n67890DEF\nOH MY!"))
 }
 
+func TestStrState(t *testing.T) {
+	testTokeniserState(t, parser.NewStringTokeniser("12345ABC\n67890DEF\nOH MY!"))
+}
+
 func ExampleNewStringTokeniser() {
 	p := parser.NewStringTokeniser("Hello, World!")
 	alphaNum := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"

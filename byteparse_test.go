@@ -131,6 +131,40 @@ func TestByteExceptRun(t *testing.T) {
 	testTokeniserExceptRun(t, parser.NewByteTokeniser([]byte("12345ABC\n67890DEF\nOH MY!")))
 }
 
+func testTokeniserState(t *testing.T, p parser.Tokeniser) {
+	state := p.State()
+
+	a := p.Next()
+	b := p.Next()
+	c := p.Next()
+	d := p.Next()
+	l := p.Len()
+
+	state.Reset()
+
+	if p.Next() != a || p.Next() != b || p.Next() != c || p.Next() != d || p.Len() != l {
+		t.Errorf("test 1: failed to reset state correctly")
+	}
+
+	state = p.State()
+
+	a = p.Next()
+	b = p.Next()
+	c = p.Next()
+	d = p.Next()
+	l = p.Len()
+
+	state.Reset()
+
+	if p.Next() != a || p.Next() != b || p.Next() != c || p.Next() != d || p.Len() != l {
+		t.Errorf("test 2: failed to reset state correctly")
+	}
+}
+
+func TestByteState(t *testing.T) {
+	testTokeniserState(t, parser.NewByteTokeniser([]byte("12345ABC\n67890DEF\nOH MY!")))
+}
+
 func ExampleNewByteTokeniser() {
 	p := parser.NewByteTokeniser([]byte("Hello, World!"))
 	alphaNum := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"

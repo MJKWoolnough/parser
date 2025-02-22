@@ -50,6 +50,22 @@ func (p *strParser) reset() {
 	p.width = 0
 }
 
+func (p *strParser) sub() tokeniser {
+	return &sub{
+		tokeniser: p,
+		tState:    len(p.str),
+		start:     p.pos,
+	}
+}
+
+func (p *strParser) slice(state, start int) (string, int) {
+	if len(p.str) != state || start > p.pos {
+		return "", -1
+	}
+
+	return p.str[start:p.pos], p.pos
+}
+
 type strState struct {
 	s          *strParser
 	stateID    int

@@ -50,6 +50,22 @@ func (p *byteParser) reset() {
 	p.width = 0
 }
 
+func (p *byteParser) sub() tokeniser {
+	return &sub{
+		tokeniser: p,
+		tState:    len(p.data),
+		start:     p.pos,
+	}
+}
+
+func (p *byteParser) slice(state, start int) (string, int) {
+	if len(p.data) != state || start > p.pos {
+		return "", -1
+	}
+
+	return string(p.data[start:p.pos]), p.pos
+}
+
 type byteState struct {
 	b          *byteParser
 	stateID    int

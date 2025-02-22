@@ -61,6 +61,22 @@ func (r *readerParser) reset() {
 	r.pos = 0
 }
 
+func (r *readerParser) sub() tokeniser {
+	return &sub{
+		tokeniser: r,
+		tState:    r.stateNum,
+		start:     r.pos,
+	}
+}
+
+func (r *readerParser) slice(state, start int) (string, int) {
+	if r.stateNum != state || start > r.pos {
+		return "", -1
+	}
+
+	return string(r.buf[start:r.pos]), r.pos
+}
+
 type readerState struct {
 	r        *readerParser
 	stateNum int

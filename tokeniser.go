@@ -46,6 +46,8 @@ type tokeniser interface {
 	next() rune
 	reset()
 	state() State
+	sub() tokeniser
+	slice(int, int) (string, int)
 }
 
 // Tokeniser is a state machine to generate tokens from an input.
@@ -271,6 +273,12 @@ func (t *Tokeniser) State() State {
 	return t.tokeniser.state()
 }
 
+func (t *Tokeniser) SubTokeniser() *Tokeniser {
+	return &Tokeniser{
+		tokeniser: t.tokeniser.sub(),
+	}
+}
+
 // ExceptRun reads from the string as long as the read character is not in the
 // given string.
 //
@@ -333,6 +341,19 @@ func (t *Tokeniser) Error() (Token, TokenFunc) {
 		Type: TokenError,
 		Data: t.Err.Error(),
 	}, (*Tokeniser).Error
+}
+
+type sub struct {
+	tokeniser
+	tState, start int
+}
+
+func (s *sub) get() string {
+	var str string
+
+	str, s.start = s.slice(s.tState, s.start)
+
+	return str
 }
 
 // Errors.

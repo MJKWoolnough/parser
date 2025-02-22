@@ -158,6 +158,23 @@ func TestTokeniserExceptRun(t *testing.T) {
 	}
 }
 
+func TestTokeniserReset(t *testing.T) {
+	for n, p := range tokenisers("ABCDEFGHIJKLMNOPQRSTUVWXYZ") {
+		p.ExceptRun("E")
+		p.Reset()
+
+		if got := p.Get(); got != "" {
+			t.Errorf("test 1 (%s): expecting to get %q, got %q", n, "", got)
+		}
+
+		p.ExceptRun("E")
+
+		if got := p.Get(); got != "ABCD" {
+			t.Errorf("test 1 (%s): expecting to get %q, got %q", n, "ABCD", got)
+		}
+	}
+}
+
 func TestTokeniserState(t *testing.T) {
 	for n, p := range tokenisers("12345ABC\n67890DEF\nOH MY!") {
 		state := p.State()

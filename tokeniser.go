@@ -354,6 +354,10 @@ type sub struct {
 }
 
 func (s *sub) get() string {
+	if s.start < 0 {
+		return ""
+	}
+
 	var str string
 
 	str, s.start = s.slice(s.tState, s.start)

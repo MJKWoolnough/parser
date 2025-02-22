@@ -457,6 +457,17 @@ func (t *Tokeniser) State() State
 Retrieve the current Tokeniser state that allows you to reset to that point.
 State is only valid until next 'Get' call.
 
+#### func (*Tokeniser) SubTokeniser
+
+```go
+func (t *Tokeniser) SubTokeniser() *Tokeniser
+```
+SubTokeniser create a new Tokeniser that uses this existing tokeniser as its
+source.
+
+This allows the sub-tokenisers Get method to be called without calling it on its
+parent.
+
 #### func (*Tokeniser) TokeniserState
 
 ```go

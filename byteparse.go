@@ -51,24 +51,27 @@ func (p *byteParser) reset() {
 }
 
 type byteState struct {
-	b     *byteParser
-	state byteParser
+	b          *byteParser
+	stateID    int
+	pos, width int
 }
 
 func (p *byteParser) state() State {
 	return &byteState{
-		b:     p,
-		state: *p,
+		b:       p,
+		stateID: len(p.data),
+		pos:     p.pos,
+		width:   p.width,
 	}
 }
 
 func (b *byteState) Reset() bool {
-	if string(b.b.data) != string(b.state.data) {
+	if len(b.b.data) != b.stateID {
 		return false
 	}
 
-	b.b.pos = b.state.pos
-	b.b.width = b.state.width
+	b.b.pos = b.pos
+	b.b.width = b.width
 
 	return true
 }

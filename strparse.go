@@ -51,24 +51,27 @@ func (p *strParser) reset() {
 }
 
 type strState struct {
-	s     *strParser
-	state strParser
+	s          *strParser
+	stateID    int
+	pos, width int
 }
 
 func (p *strParser) state() State {
 	return &strState{
-		s:     p,
-		state: *p,
+		s:       p,
+		stateID: len(p.str),
+		pos:     p.pos,
+		width:   p.width,
 	}
 }
 
 func (s *strState) Reset() bool {
-	if s.s.str != s.state.str {
+	if len(s.s.str) != s.stateID {
 		return false
 	}
 
-	s.s.pos = s.state.pos
-	s.s.width = s.state.width
+	s.s.pos = s.pos
+	s.s.width = s.width
 
 	return true
 }

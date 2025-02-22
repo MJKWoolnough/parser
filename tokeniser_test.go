@@ -12,6 +12,30 @@ func tokenisers(str string) iter.Seq2[string, Tokeniser] {
 	}
 }
 
+func TestTokeniserNext(t *testing.T) {
+	for n, p := range tokenisers("ABCDEFGH") {
+		if c := p.Peek(); c != 'A' {
+			t.Errorf("test 1 (%s): expecting %q, got %q", n, 'A', c)
+		}
+
+		if c := p.Peek(); c != 'A' {
+			t.Errorf("test 2 (%s): expecting %q, got %q", n, 'A', c)
+		}
+
+		if c := p.Next(); c != 'A' {
+			t.Errorf("test 3 (%s): expecting %q, got %q", n, 'A', c)
+		}
+
+		if c := p.Next(); c != 'B' {
+			t.Errorf("test 4 (%s): expecting %q, got %q", n, 'B', c)
+		}
+
+		if c := p.Peek(); c != 'C' {
+			t.Errorf("test 5 (%s): expecting %q, got %q", n, 'C', c)
+		}
+	}
+}
+
 func TestTokeniserAccept(t *testing.T) {
 	for n, p := range tokenisers("ABC£") {
 		p.Accept("ABCD")

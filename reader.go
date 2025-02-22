@@ -54,7 +54,15 @@ func (r *readerParser) get() string {
 }
 
 func (r *readerParser) length() int {
-	return r.pos
+	var l int
+
+	for _, r := range r.buf {
+		s := utf8.RuneLen(r)
+
+		l += s
+	}
+
+	return l
 }
 
 func (r *readerParser) reset() {

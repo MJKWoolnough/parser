@@ -273,6 +273,11 @@ func (t *Tokeniser) State() State {
 	return t.tokeniser.state()
 }
 
+// SubTokeniser create a new Tokeniser that uses this existing tokeniser as its
+// source.
+//
+// This allows the sub-tokenisers Get method to be called without calling it on
+// its parent.
 func (t *Tokeniser) SubTokeniser() *Tokeniser {
 	return &Tokeniser{
 		tokeniser: t.tokeniser.sub(),

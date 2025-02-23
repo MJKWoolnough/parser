@@ -333,6 +333,8 @@ func (t *Tokeniser) AcceptWord(words []string, caseInsensitive bool) string
 AcceptWord attempts to parse one of the words (string of characters) provided in
 the slice.
 
+Returns the longest word parsed, or empty string if no words matched.
+
 #### func (*Tokeniser) Done
 
 ```go

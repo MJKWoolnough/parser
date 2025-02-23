@@ -8,7 +8,12 @@ import (
 
 func tokenisers(str string) iter.Seq2[string, Tokeniser] {
 	return func(yield func(string, Tokeniser) bool) {
-		_ = yield("string", NewStringTokeniser(str)) && yield("bytes", NewByteTokeniser([]byte(str))) && yield("reader", NewReaderTokeniser(strings.NewReader(str)))
+		_ = yield("string", NewStringTokeniser(str)) &&
+			yield("bytes", NewByteTokeniser([]byte(str))) &&
+			yield("reader", NewReaderTokeniser(strings.NewReader(str))) &&
+			yield("sub (string)", Tokeniser{tokeniser: NewStringTokeniser(str).sub()}) &&
+			yield("sub (bytes)", Tokeniser{tokeniser: NewByteTokeniser([]byte(str)).sub()}) &&
+			yield("sub (reader)", Tokeniser{tokeniser: NewReaderTokeniser(strings.NewReader(str)).sub()})
 	}
 }
 
@@ -16,21 +21,13 @@ func TestTokeniserNext(t *testing.T) {
 	for n, p := range tokenisers("ABCDEFGH") {
 		if c := p.Peek(); c != 'A' {
 			t.Errorf("test 1 (%s): expecting %q, got %q", n, 'A', c)
-		}
-
-		if c := p.Peek(); c != 'A' {
+		} else if c = p.Peek(); c != 'A' {
 			t.Errorf("test 2 (%s): expecting %q, got %q", n, 'A', c)
-		}
-
-		if c := p.Next(); c != 'A' {
+		} else if c = p.Next(); c != 'A' {
 			t.Errorf("test 3 (%s): expecting %q, got %q", n, 'A', c)
-		}
-
-		if c := p.Next(); c != 'B' {
+		} else if c = p.Next(); c != 'B' {
 			t.Errorf("test 4 (%s): expecting %q, got %q", n, 'B', c)
-		}
-
-		if c := p.Peek(); c != 'C' {
+		} else if c = p.Peek(); c != 'C' {
 			t.Errorf("test 5 (%s): expecting %q, got %q", n, 'C', c)
 		}
 	}
@@ -38,115 +35,48 @@ func TestTokeniserNext(t *testing.T) {
 
 func TestTokeniserAccept(t *testing.T) {
 	for n, p := range tokenisers("ABC£") {
-		p.Accept("ABCD")
-		if s := p.Get(); s != "A" {
+		if _, s := p.Accept("ABCD"), p.Get(); s != "A" {
 			t.Errorf("test 1 (%s): expecting \"A\", got %q", n, s)
-		}
-
-		p.Accept("ABCD")
-		if s := p.Get(); s != "B" {
+		} else if _, s = p.Accept("ABCD"), p.Get(); s != "B" {
 			t.Errorf("test 2 (%s): expecting \"B\", got %q", n, s)
-
-			continue
-		}
-
-		p.Accept("ABCD")
-		if s := p.Get(); s != "C" {
+		} else if _, s = p.Accept("ABCD"), p.Get(); s != "C" {
 			t.Errorf("test 3 (%s): expecting \"C\", got %q", n, s)
-
-			continue
-		}
-
-		p.Accept("ABCD")
-		if s := p.Get(); s != "" {
+		} else if _, s = p.Accept("ABCD"), p.Get(); s != "" {
 			t.Errorf("test 4 (%s): expecting \"\", got %q", n, s)
-
-			continue
-		}
-
-		p.Accept("£")
-		if s := p.Get(); s != "£" {
+		} else if _, s = p.Accept("£"), p.Get(); s != "£" {
 			t.Errorf("test 5 (%s): expecting \"£\", got %q", n, s)
-
-			continue
 		}
 	}
 }
 
 func TestTokeniserAcceptRun(t *testing.T) {
 	for n, p := range tokenisers("123ABC££$$%%^^\n") {
-		p.AcceptRun("0123456789")
-		if s := p.Get(); s != "123" {
+		if _, s := p.AcceptRun("0123456789"), p.Get(); s != "123" {
 			t.Errorf("test 1 (%s): expecting \"123\", got %q", n, s)
-
-			continue
-		}
-
-		p.AcceptRun("ABC")
-		if s := p.Get(); s != "ABC" {
+		} else if _, s = p.AcceptRun("ABC"), p.Get(); s != "ABC" {
 			t.Errorf("test 2 (%s): expecting \"ABC\", got %q", n, s)
-
-			continue
-		}
-
-		p.AcceptRun("£$%^")
-		if s := p.Get(); s != "££$$%%^^" {
+		} else if _, s = p.AcceptRun("£$%^"), p.Get(); s != "££$$%%^^" {
 			t.Errorf("test 3 (%s): expecting \"££$$%%^^\", got %q", n, s)
-
-			continue
-		}
-
-		p.AcceptRun("\n")
-		if s := p.Get(); s != "\n" {
+		} else if _, s = p.AcceptRun("\n"), p.Get(); s != "\n" {
 			t.Errorf("test 4 (%s): expecting \"\\n\", got %q", n, s)
-
-			continue
 		}
 	}
 }
 
 func TestTokeniserExcept(t *testing.T) {
 	for n, p := range tokenisers("123") {
-		p.Except("1")
-		if s := p.Get(); s != "" {
+		if _, s := p.Except("1"), p.Get(); s != "" {
 			t.Errorf("test 1 (%s): expecting \"\", got %q", n, s)
-
-			continue
-		}
-
-		p.Except("2")
-		if s := p.Get(); s != "1" {
+		} else if _, s = p.Except("2"), p.Get(); s != "1" {
 			t.Errorf("test 2 (%s): expecting \"1\", got %q", n, s)
-
-			continue
-		}
-
-		p.Except("2")
-		if s := p.Get(); s != "" {
+		} else if _, s = p.Except("2"), p.Get(); s != "" {
 			t.Errorf("test 3 (%s): expecting \"\", got %q", n, s)
-
-			continue
-		}
-
-		p.Except("!")
-		if s := p.Get(); s != "2" {
+		} else if _, s = p.Except("!"), p.Get(); s != "2" {
 			t.Errorf("test 4 (%s): expecting \"2\", got %q", n, s)
-
-			continue
-		}
-
-		p.Except("!")
-		if s := p.Get(); s != "3" {
+		} else if _, s = p.Except("!"), p.Get(); s != "3" {
 			t.Errorf("test 5 (%s): expecting \"3\", got %q", n, s)
-
-			continue
-		}
-
-		p.Except("!")
-		if s := p.Get(); s != "" {
+		} else if _, s = p.Except("!"), p.Get(); s != "" {
 			t.Errorf("test 6 (%s): expecting \"\", got %q", n, s)
-
-			continue
 		}
 	}
 }
@@ -189,12 +119,8 @@ func TestTokeniserReset(t *testing.T) {
 
 		if got := p.Get(); got != "" {
 			t.Errorf("test 1 (%s): expecting to get %q, got %q", n, "", got)
-		}
-
-		p.ExceptRun("E")
-
-		if got := p.Get(); got != "ABCD" {
-			t.Errorf("test 1 (%s): expecting to get %q, got %q", n, "ABCD", got)
+		} else if _, got = p.ExceptRun("E"), p.Get(); got != "ABCD" {
+			t.Errorf("test 2 (%s): expecting to get %q, got %q", n, "ABCD", got)
 		}
 	}
 }
@@ -325,38 +251,50 @@ func TestTokeniserAcceptWord(t *testing.T) {
 
 func TestTokeniserSub(t *testing.T) {
 	for n, p := range tokenisers("ABCDEFGHIJKLMNOPQRSTUVWXYZ") {
-		if c := p.Next(); c != 'A' {
+		if _, ok := p.tokeniser.(*sub); ok {
+			break
+		} else if c := p.Next(); c != 'A' {
 			t.Errorf("test 1 (%s): expecting to read %q, got %q", n, 'A', c)
+
+			continue
 		}
 
 		q := p.SubTokeniser()
 
 		if c := q.Next(); c != 'B' {
 			t.Errorf("test 2 (%s): expecting to read %q, got %q", n, 'B', c)
+
+			continue
 		}
 
 		if c := q.ExceptRun("H"); c != 'H' {
 			t.Errorf("test 3 (%s): expecting to read %q, got %q", n, 'H', c)
-		}
 
-		if got := q.Get(); got != "BCDEFG" {
+			continue
+		} else if got := q.Get(); got != "BCDEFG" {
 			t.Errorf("test 4 (%s): expecting to read %q, got %q", n, "BCDEFG", got)
+
+			continue
 		}
 
 		q.Next()
 
 		if got := q.Get(); got != "H" {
 			t.Errorf("test 5 (%s): expecting to read %q, got %q", n, "H", got)
-		}
 
-		if got := p.Get(); got != "ABCDEFGH" {
+			continue
+		} else if got := p.Get(); got != "ABCDEFGH" {
 			t.Errorf("test 6 (%s): expecting to read %q, got %q", n, "ABCDEFGH", got)
+
+			continue
 		}
 
 		q.Next()
 
 		if got := q.Get(); got != "" {
 			t.Errorf("test 7 (%s): expecting to read %q, got %q", n, "", got)
+
+			continue
 		}
 
 		p.Next()
@@ -371,13 +309,9 @@ func TestTokeniserSub(t *testing.T) {
 
 		if got := r.Get(); got != "L" {
 			t.Errorf("test 8 (%s): expecting to read %q, got %q", n, "L", got)
-		}
-
-		if got := q.Get(); got != "KL" {
+		} else if got := q.Get(); got != "KL" {
 			t.Errorf("test 9 (%s): expecting to read %q, got %q", n, "KL", got)
-		}
-
-		if got := p.Get(); got != "IJKL" {
+		} else if got := p.Get(); got != "IJKL" {
 			t.Errorf("test 10 (%s): expecting to read %q, got %q", n, "HIJKL", got)
 		}
 	}

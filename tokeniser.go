@@ -193,6 +193,8 @@ func runeComparison(a, b rune, caseInsensitive bool) bool {
 
 // AcceptWord attempts to parse one of the words (string of characters)
 // provided in the slice.
+//
+// Returns the longest word parsed, or empty string if no words matched.
 func (t *Tokeniser) AcceptWord(words []string, caseInsensitive bool) string {
 	words = slices.Clone(words)
 

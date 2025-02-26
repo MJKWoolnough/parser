@@ -241,6 +241,10 @@ func TestTokeniserAcceptWord(t *testing.T) {
 				Read:            "LMNOPQR",
 				CaseInsensitive: true,
 			},
+			{
+				Words: []string{"ZYX", "ST", "STZ"},
+				Read:  "ST",
+			},
 		} {
 			if read := p.AcceptWord(test.Words, test.CaseInsensitive); read != test.Read {
 				t.Errorf("test %d (%s): expecting to parse %q, parsed %q", n+1, m, test.Read, read)

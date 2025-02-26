@@ -226,7 +226,7 @@ func (t *Tokeniser) acceptWord(words []string, caseInsensitive bool) string {
 
 				if runeComparison(char, r, caseInsensitive) {
 					word = word[s:]
-					found = word == ""
+					found = found || word == ""
 
 					newWords = append(newWords, word)
 				}

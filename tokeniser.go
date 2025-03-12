@@ -136,6 +136,7 @@ func (t *Tokeniser) Next() rune {
 // Peek returns the next rune without advancing the read position.
 func (t *Tokeniser) Peek() rune {
 	r := t.next()
+
 	t.backup()
 
 	return r
@@ -203,10 +204,12 @@ func (t *Tokeniser) AcceptWord(words []string, caseInsensitive bool) string {
 
 func (t *Tokeniser) acceptWord(words []string, caseInsensitive bool) string {
 	s := t.State()
+
 	var sb strings.Builder
 
 	for len(words) > 0 {
 		char := t.Next()
+
 		sb.WriteRune(char)
 
 		if char < 0 {
@@ -227,7 +230,6 @@ func (t *Tokeniser) acceptWord(words []string, caseInsensitive bool) string {
 				if runeComparison(char, r, caseInsensitive) {
 					word = word[s:]
 					found = found || word == ""
-
 					newWords = append(newWords, word)
 				}
 			}

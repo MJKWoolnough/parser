@@ -58,7 +58,6 @@ func (r *readerParser) length() int {
 
 	for _, r := range r.buf {
 		s := utf8.RuneLen(r)
-
 		l += s
 	}
 

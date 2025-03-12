@@ -3,6 +3,7 @@ package parser
 import (
 	"errors"
 	"io"
+	"slices"
 )
 
 // PhraseType represents the type of phrase being read.
@@ -149,13 +150,11 @@ func (p *Parser) Get() []Token {
 
 	if p.peekedToken {
 		tk := p.tokens[len(p.tokens)-1]
-		toRet = make([]Token, len(p.tokens)-1)
-		copy(toRet, p.tokens)
+		toRet = slices.Clone(p.tokens[:len(p.tokens)-1])
 		p.tokens[0] = tk
 		p.tokens = p.tokens[:1]
 	} else {
-		toRet = make([]Token, len(p.tokens))
-		copy(toRet, p.tokens)
+		toRet = slices.Clone(p.tokens)
 		p.tokens = p.tokens[:0]
 	}
 

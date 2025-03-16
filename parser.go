@@ -37,3 +37,14 @@ func NewReaderTokeniser(reader io.Reader) Tokeniser {
 		},
 	}
 }
+
+// NewRuneReaderTokeniser returns a Tokeniser which uses an io.RuneReader.
+//
+// Any rune errors will result in EOF.
+func NewRuneReaderTokeniser(source io.RuneReader) Tokeniser {
+	return Tokeniser{
+		tokeniser: &runeSourceParser{
+			source: source,
+		},
+	}
+}

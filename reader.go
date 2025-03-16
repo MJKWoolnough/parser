@@ -56,9 +56,10 @@ func (r *readerParser) get() string {
 func (r *readerParser) length() int {
 	var l int
 
-	for _, r := range r.buf {
-		s := utf8.RuneLen(r)
-		l += s
+	for _, r := range r.buf[:r.pos] {
+		if r != -1 {
+			l += utf8.RuneLen(r)
+		}
 	}
 
 	return l

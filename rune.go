@@ -49,9 +49,10 @@ func (r *runeSourceParser) get() string {
 func (r *runeSourceParser) length() int {
 	var l int
 
-	for _, r := range r.buf {
-		s := utf8.RuneLen(r)
-		l += s
+	for _, r := range r.buf[:r.pos] {
+		if r != -1 {
+			l += utf8.RuneLen(r)
+		}
 	}
 
 	return l

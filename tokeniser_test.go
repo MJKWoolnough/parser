@@ -11,9 +11,11 @@ func tokenisers(str string) iter.Seq2[string, Tokeniser] {
 		_ = yield("string", NewStringTokeniser(str)) &&
 			yield("bytes", NewByteTokeniser([]byte(str))) &&
 			yield("reader", NewReaderTokeniser(strings.NewReader(str))) &&
+			yield("rune reader", NewRuneReaderTokeniser(strings.NewReader(str))) &&
 			yield("sub (string)", Tokeniser{tokeniser: NewStringTokeniser(str).sub()}) &&
 			yield("sub (bytes)", Tokeniser{tokeniser: NewByteTokeniser([]byte(str)).sub()}) &&
-			yield("sub (reader)", Tokeniser{tokeniser: NewReaderTokeniser(strings.NewReader(str)).sub()})
+			yield("sub (reader)", Tokeniser{tokeniser: NewReaderTokeniser(strings.NewReader(str)).sub()}) &&
+			yield("sub (rune reader)", Tokeniser{tokeniser: NewRuneReaderTokeniser(strings.NewReader(str)).sub()})
 	}
 }
 

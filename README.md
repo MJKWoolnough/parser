@@ -289,6 +289,15 @@ func NewReaderTokeniser(reader io.Reader) Tokeniser
 ```
 NewReaderTokeniser returns a Tokeniser which uses an io.Reader.
 
+#### func  NewRuneReaderTokeniser
+
+```go
+func NewRuneReaderTokeniser(source io.RuneReader) Tokeniser
+```
+NewRuneReaderTokeniser returns a Tokeniser which uses an io.RuneReader.
+
+Any rune errors will result in EOF.
+
 #### func  NewStringTokeniser
 
 ```go

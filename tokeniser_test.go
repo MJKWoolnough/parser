@@ -35,6 +35,40 @@ func TestTokeniserNext(t *testing.T) {
 	}
 }
 
+func TestTokeniserLen(t *testing.T) {
+	for n, p := range tokenisers("A…") {
+		p.Peek()
+
+		if l := p.Len(); l != 0 {
+			t.Errorf("test 1 (%s): expecting to have read 0 bytes, read %d", n, l)
+		}
+
+		p.Next()
+
+		if l := p.Len(); l != 1 {
+			t.Errorf("test 2 (%s): expecting to have read 1 byte, read %d", n, l)
+		}
+
+		p.Next()
+
+		if l := p.Len(); l != 4 {
+			t.Errorf("test 3 (%s): expecting to have read 4 bytes, read %d", n, l)
+		}
+
+		p.Next()
+
+		if l := p.Len(); l != 4 {
+			t.Errorf("test 4 (%s): expecting to have read 4 bytes, read %d", n, l)
+		}
+
+		p.Next()
+
+		if l := p.Len(); l != 4 {
+			t.Errorf("test 5 (%s): expecting to have read 4 bytes, read %d", n, l)
+		}
+	}
+}
+
 func TestTokeniserAccept(t *testing.T) {
 	for n, p := range tokenisers("ABC£") {
 		if _, s := p.Accept("ABCD"), p.Get(); s != "A" {

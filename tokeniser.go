@@ -128,6 +128,21 @@ func (t *Tokeniser) Accept(chars string) bool {
 	return true
 }
 
+// AcceptRune returns true if the next character to be read is the rune
+// specified
+//
+// Upon true, it advances the read position, otherwise the position remains the
+// same.
+func (t *Tokeniser) AcceptRune(r rune) bool {
+	if t.next() == r {
+		return true
+	}
+
+	t.backup()
+
+	return false
+}
+
 // Next returns the next rune and advances the read position.
 func (t *Tokeniser) Next() rune {
 	return t.next()

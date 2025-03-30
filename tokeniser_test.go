@@ -85,6 +85,22 @@ func TestTokeniserAccept(t *testing.T) {
 	}
 }
 
+func TestTokeniserAcceptRune(t *testing.T) {
+	for n, p := range tokenisers("ABC£") {
+		if _, s := p.AcceptRune('A'), p.Get(); s != "A" {
+			t.Errorf("test 1 (%s): expecting \"A\", got %q", n, s)
+		} else if _, s = p.AcceptRune('B'), p.Get(); s != "B" {
+			t.Errorf("test 2 (%s): expecting \"B\", got %q", n, s)
+		} else if _, s = p.AcceptRune('C'), p.Get(); s != "C" {
+			t.Errorf("test 3 (%s): expecting \"C\", got %q", n, s)
+		} else if _, s = p.AcceptRune('D'), p.Get(); s != "" {
+			t.Errorf("test 4 (%s): expecting \"\", got %q", n, s)
+		} else if _, s = p.AcceptRune('£'), p.Get(); s != "£" {
+			t.Errorf("test 5 (%s): expecting \"£\", got %q", n, s)
+		}
+	}
+}
+
 func TestTokeniserAcceptRun(t *testing.T) {
 	for n, p := range tokenisers("123ABC££$$%%^^\n") {
 		if _, s := p.AcceptRun("0123456789"), p.Get(); s != "123" {

@@ -326,6 +326,16 @@ string.
 
 Returns the rune that stopped the run.
 
+#### func (*Tokeniser) AcceptRune
+
+```go
+func (t *Tokeniser) AcceptRune(r rune) bool
+```
+AcceptRune returns true if the next character to be read is the rune specified
+
+Upon true, it advances the read position, otherwise the position remains the
+same.
+
 #### func (*Tokeniser) AcceptString
 
 ```go

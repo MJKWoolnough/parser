@@ -120,10 +120,8 @@ func (p *Parser) backup() {
 func (p *Parser) Accept(types ...TokenType) bool {
 	tk := p.get()
 
-	for _, t := range types {
-		if tk.Type == t {
-			return true
-		}
+	if slices.Contains(types, tk.Type) {
+		return true
 	}
 
 	p.backup()
@@ -198,10 +196,8 @@ Loop:
 func (p *Parser) AcceptToken(tokens ...Token) bool {
 	tk := p.get()
 
-	for _, ttk := range tokens {
-		if ttk == tk {
-			return true
-		}
+	if slices.Contains(tokens, tk) {
+		return true
 	}
 
 	p.backup()
@@ -214,12 +210,10 @@ func (p *Parser) AcceptToken(tokens ...Token) bool {
 func (p *Parser) Except(types ...TokenType) bool {
 	tk := p.get()
 
-	for _, t := range types {
-		if tk.Type == t {
-			p.backup()
+	if slices.Contains(types, tk.Type) {
+		p.backup()
 
-			return false
-		}
+		return false
 	}
 
 	return true
